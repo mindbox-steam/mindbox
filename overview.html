@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tổng quan - MindBox</title>
+    <link rel="icon" type="image/png" href="https://i.ibb.co/s9wPgpNd/B-1.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4A90E2; --sidebar-bg: #ffffff; --main-bg: #f4f7fa;
+            --text-color: #333; --text-light: #777; --border-color: #e6e9f0;
+            --shadow-color: rgba(60, 64, 67, 0.15); --warning-color: #f5a623;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Be Vietnam Pro', sans-serif; background-color: var(--main-bg); color: var(--text-color); overflow: hidden; }
+        #loader-wrapper { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #fff; display: flex; justify-content: center; align-items: center; z-index: 9999; transition: opacity 0.5s ease; }
+        .spinner { width: 50px; height: 50px; border: 5px solid var(--border-color); border-top: 5px solid var(--primary-color); border-radius: 50%; animation: spin 1s linear infinite; }
+        #loader-wrapper.hidden { opacity: 0; pointer-events: none; }
+        .dashboard-container { display: flex; height: 100vh; opacity: 0; transition: opacity 0.5s ease; }
+        .dashboard-container.loaded { opacity: 1; }
+        .sidebar { width: 260px; background-color: var(--sidebar-bg); padding: 1rem 1.5rem; display: flex; flex-direction: column; border-right: 1px solid var(--border-color); }
+        .main-content { flex: 1; padding: 2.5rem 3.5rem; overflow-y: auto; }
+        .sidebar-header { text-align: center; padding: 0; margin-bottom: 1.5rem; }
+        .sidebar-header img { width: 160px; height: auto; }
+        .user-profile { display: flex; align-items: center; margin-bottom: 1.5rem; padding: 0.5rem; }
+        .user-profile .avatar { width: 40px; height: 40px; border-radius: 50%; margin-right: 15px; object-fit: cover; background-color: var(--primary-color); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.2rem; flex-shrink: 0; }
+        .user-info h4 { font-size: 1rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px; }
+        .user-info p { font-size: 0.8rem; color: var(--text-light); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px; }
+        .nav-menu { flex: 1; }
+        .nav-menu a { display: flex; align-items: center; padding: 0.9rem 1rem; text-decoration: none; color: var(--text-light); font-weight: 500; border-radius: 8px; margin-bottom: 0.25rem; transition: background-color 0.3s, color 0.3s; }
+        .nav-menu a i { width: 20px; margin-right: 15px; text-align: center; }
+        .nav-menu a:hover { background-color: var(--main-bg); color: var(--text-color); }
+        .nav-menu a.active { background-color: var(--primary-color); color: #fff; }
+        .logout-btn { display: flex; align-items: center; padding: 0.9rem 1rem; border: none; background: none; width: 100%; text-align: left; cursor: pointer; color: var(--text-light); font-weight: 500; border-radius: 8px; font-size: 1rem; font-family: 'Be Vietnam Pro', sans-serif; margin-top: auto; }
+        .logout-btn:hover { background-color: #ffebee; color: #c62828; }
+        .page-header { margin-bottom: 2.5rem; }
+        .page-header h1 { font-size: 2rem; font-weight: 700; }
+        .page-header p { color: var(--text-light); font-size: 1rem; }
+        .cards-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; }
+        .card { background-color: #fff; padding: 1.5rem; border-radius: 12px; box-shadow: 0 1px 2px 0 rgba(60,64,67,.3), 0 2px 6px 2px rgba(60,64,67,.15); transition: transform 0.3s, box-shadow 0.3s; cursor: pointer; }
+        .card:hover { transform: translateY(-5px); box-shadow: 0 4px 8px 3px rgba(60,64,67,.15), 0 1px 3px 0 rgba(60,64,67,.3); }
+        .card.create-new, .card.feedback, .card.announcement { display: flex; flex-direction: column; justify-content: center; align-items: center; border: 2px dashed var(--border-color); background-color: transparent; box-shadow: none; }
+        .card.create-new:hover { border-color: var(--primary-color); background-color: #f0f6ff; }
+        .card.create-new i, .card.feedback i, .card.announcement i { font-size: 2rem; margin-bottom: 1rem; }
+        .card.create-new h3, .card.feedback h3, .card.announcement h3 { font-size: 1.1rem; font-weight: 700; }
+        .card.feedback { border-color: var(--warning-color); color: #c3841d; }
+        .card.feedback:hover { background-color: #fff8e1; }
+        .card.feedback i { color: var(--warning-color); }
+        .card.announcement { border-color: #3498db; color: #2980b9; }
+        .card.announcement:hover { background-color: #eaf5fb; }
+        .card.announcement i { color: #3498db; }
+        .card.create-new i { color: var(--primary-color); }
+        .card.create-new h3 { color: var(--primary-color); }
+        .card h3 { margin-bottom: 0.5rem; font-size: 1.2rem; font-weight: 700; }
+        .card p { font-size: 0.9rem; color: var(--text-light); }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; display: none; justify-content: center; align-items: center; opacity: 0; transition: opacity 0.3s ease; }
+        .modal-overlay.visible { display: flex; opacity: 1; }
+        .modal-content { background: #fff; padding: 2.5rem; border-radius: 16px; width: 90%; max-width: 600px; transform: scale(0.95); transition: transform 0.3s ease; max-height: 80vh; display: flex; flex-direction: column; }
+        .modal-overlay.visible .modal-content { transform: scale(1); }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+        .modal-header h2 { font-size: 1.5rem; }
+        .close-btn { background: none; border: none; font-size: 1.5rem; cursor: pointer; }
+        .form-group { margin-bottom: 1.5rem; }
+        .form-group label { display: block; font-weight: 700; margin-bottom: 0.5rem; }
+        .form-group select, .form-group textarea { width: 100%; padding: 0.8rem; border: 1px solid var(--border-color); border-radius: 8px; font-size: 1rem; }
+        .btn { padding: 0.8rem 1.5rem; border: none; border-radius: 8px; font-size: 1rem; font-weight: 700; cursor: pointer; }
+        .btn-primary { background-color: var(--primary-color); color: #fff; }
+        .notification-banner { background-color: var(--primary-color); color: white; padding: 1rem 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; display: none; justify-content: space-between; align-items: center; animation: slideDown 0.5s ease-out forwards; }
+        .notification-content { display: flex; align-items: center; gap: 1rem; }
+        .notification-banner .close-btn { color: white; opacity: 0.7; transition: opacity 0.2s; }
+        .notification-banner .close-btn:hover { opacity: 1; }
+        .modal-tabs { display: flex; border-bottom: 1px solid var(--border-color); margin-bottom: 1.5rem; }
+        .tab-btn { background: none; border: none; padding: 0.8rem 1.2rem; cursor: pointer; font-size: 1rem; font-weight: 500; color: var(--text-light); position: relative; }
+        .tab-btn.active { color: var(--primary-color); font-weight: 700; }
+        .tab-btn.active::after { content: ''; position: absolute; bottom: -1px; left: 0; width: 100%; height: 2px; background: var(--primary-color); }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        #feedback-history-list { max-height: 40vh; overflow-y: auto; padding-right: 1rem; }
+        .history-item { border: 1px solid var(--border-color); border-radius: 8px; padding: 1rem; margin-bottom: 1rem; }
+        .history-item-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
+        .history-item-header .status { font-weight: 700; font-size: 0.9rem; }
+        .history-item p { margin-bottom: 0.5rem; }
+        .admin-reply { background-color: #eaf5fb; border-left: 4px solid #3498db; padding: 0.8rem; margin-top: 1rem; border-radius: 4px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-100%); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+    <div id="loader-wrapper"><div class="spinner"></div></div>
+    <div class="dashboard-container" id="dashboard-container">
+        <aside class="sidebar">
+            <div class="sidebar-header"><a href="overview.html"><img src="https://i.ibb.co/WWn2bhYt/H-ng-Sinh-nh-t-B-n-thuy-t-tr-nh-C-c-s-ki-n-v-M-i-quan-t-m-c-bi-t.png" alt="MindBox Logo"></a></div>
+            <div class="user-profile">
+                <div id="user-avatar" class="avatar"></div>
+                <div class="user-info">
+                    <h4 id="user-display-name">...</h4>
+                    <p id="user-email">...</p>
+                </div>
+            </div>
+            <nav class="nav-menu">
+                <a href="overview.html" class="active"><i class="fas fa-home"></i> Tổng quan</a>
+                <a href="projects.html"><i class="fas fa-folder"></i> Dự án của tôi</a>
+                <a href="archive.html"><i class="fas fa-archive"></i> Lưu trữ</a>
+                <a href="settings.html"><i class="fas fa-cog"></i> Cài đặt</a>
+            </nav>
+            <button class="logout-btn" id="logout-btn"><i class="fas fa-sign-out-alt"></i> Đăng xuất</button>
+        </aside>
+        <main class="main-content">
+            <div id="notification-banner">
+                <div class="notification-content">
+                    <i class="fas fa-bullhorn"></i>
+                    <p id="notification-message"></p>
+                </div>
+                <button id="close-notification-btn" class="close-btn">&times;</button>
+            </div>
+            <header class="page-header">
+                <h1>Chào mừng trở lại!</h1>
+                <p>Hãy bắt đầu sáng tạo những trò chơi học tập tuyệt vời ngay hôm nay.</p>
+            </header>
+            <section class="projects-section">
+                <div class="cards-container" id="projects-container">
+                    <!-- Project cards will be loaded here -->
+                    <div class="card create-new" id="create-new-project-btn">
+                        <i class="fas fa-plus"></i>
+                        <h3>Tạo dự án mới</h3>
+                    </div>
+                    <div class="card feedback" id="feedback-btn">
+                        <i class="fas fa-bullhorn"></i>
+                        <h3>Góp ý / Báo lỗi</h3>
+                    </div>
+                    <div class="card announcement" id="announcement-btn" style="display: none;">
+                        <i class="fas fa-paper-plane"></i>
+                        <h3>Gửi thông báo</h3>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Feedback Modal -->
+    <div id="feedback-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header"><h2>Góp ý & Hỗ trợ</h2><button id="close-feedback-modal-btn" class="close-btn">&times;</button></div>
+            <div class="modal-tabs">
+                <button class="tab-btn active" data-tab="new-feedback-tab">Gửi Góp Ý Mới</button>
+                <button class="tab-btn" data-tab="history-feedback-tab">Lịch Sử Góp Ý</button>
+            </div>
+            
+            <div id="new-feedback-tab" class="tab-content active">
+                <form id="feedback-form">
+                    <div class="form-group"><label for="feedback-type">Loại phản hồi</label><select id="feedback-type" required><option value="Góp ý">Góp ý</option><option value="Báo lỗi">Báo lỗi</option><option value="Khác">Khác</option></select></div>
+                    <div class="form-group"><label for="feedback-message">Nội dung</label><textarea id="feedback-message" rows="5" required placeholder="Vui lòng mô tả chi tiết..."></textarea></div>
+                    <button type="submit" class="btn btn-primary">Gửi</button>
+                </form>
+            </div>
+
+            <div id="history-feedback-tab" class="tab-content">
+                <div id="feedback-history-list"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Announcement Modal (Admin only) -->
+    <div id="announcement-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header"><h2>Gửi thông báo chung</h2><button id="close-announcement-modal-btn" class="close-btn">&times;</button></div>
+            <form id="announcement-form">
+                <div class="form-group"><label for="announcement-message">Nội dung thông báo</label><textarea id="announcement-message" rows="5" required placeholder="Thông báo sẽ hiển thị cho tất cả người dùng..."></textarea></div>
+                <button type="submit" class="btn btn-primary">Gửi đi</button>
+            </form>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { getFirestore, collection, query, where, getDocs, doc, getDoc, addDoc, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDulczem0AHC0X6f0QBnztjk76Ikvdu9aA",
+            authDomain: "mindbox-steam.firebaseapp.com",
+            projectId: "mindbox-steam",
+            storageBucket: "mindbox-steam.appspot.com",
+            messagingSenderId: "356560060266",
+            appId: "1:356560060266:web:b65a671cab786aca43af13"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // General UI
+        const loader = document.getElementById('loader-wrapper');
+        const dashboardContainer = document.getElementById('dashboard-container');
+        const userAvatar = document.getElementById('user-avatar');
+        const userDisplayName = document.getElementById('user-display-name');
+        const userEmail = document.getElementById('user-email');
+        const logoutBtn = document.getElementById('logout-btn');
+        const createNewProjectBtn = document.getElementById('create-new-project-btn');
+        const projectsContainer = document.getElementById('projects-container');
+        
+        // Feedback UI
+        const feedbackBtn = document.getElementById('feedback-btn');
+        const feedbackModal = document.getElementById('feedback-modal');
+        const closeFeedbackModalBtn = document.getElementById('close-feedback-modal-btn');
+        const feedbackForm = document.getElementById('feedback-form');
+        const feedbackHistoryList = document.getElementById('feedback-history-list');
+
+        // Announcement UI
+        const announcementBtn = document.getElementById('announcement-btn');
+        const announcementModal = document.getElementById('announcement-modal');
+        const closeAnnouncementModalBtn = document.getElementById('close-announcement-modal-btn');
+        const announcementForm = document.getElementById('announcement-form');
+        const notificationBanner = document.getElementById('notification-banner');
+        const notificationMessage = document.getElementById('notification-message');
+        const closeNotificationBtn = document.getElementById('close-notification-btn');
+
+        let currentUserId = null;
+
+        async function loadUserProjects(userId) {
+            try {
+                const q = query(collection(db, "projects"), where("ownerId", "==", userId), where("isArchived", "==", false));
+                const querySnapshot = await getDocs(q);
+                
+                document.querySelectorAll('.project-card').forEach(card => card.remove());
+
+                querySnapshot.forEach(doc => {
+                    const project = doc.data();
+                    const card = document.createElement('div');
+                    card.className = 'card project-card';
+                    const createdDate = project.createdAt?.toDate ? project.createdAt.toDate().toLocaleDateString('vi-VN') : 'N/A';
+                    card.innerHTML = `<h3>${project.title}</h3><p>Ngày tạo: ${createdDate}</p>`;
+                    card.onclick = () => window.location.href = `projects.html`;
+                    projectsContainer.insertBefore(card, createNewProjectBtn);
+                });
+            } catch (error) {
+                console.error("Error fetching projects:", error);
+            }
+        }
+
+        async function loadLatestAnnouncement() {
+            try {
+                const q = query(collection(db, "announcements"), orderBy("createdAt", "desc"), limit(1));
+                const querySnapshot = await getDocs(q);
+                if (!querySnapshot.empty) {
+                    const latestAnn = querySnapshot.docs[0].data();
+                    notificationMessage.textContent = latestAnn.message;
+                    notificationBanner.style.display = 'flex';
+                }
+            } catch (error) {
+                console.error("Error fetching announcement:", error);
+            }
+        }
+
+        async function loadFeedbackHistory() {
+            if (!currentUserId) return;
+            feedbackHistoryList.innerHTML = `<p>Đang tải lịch sử...</p>`;
+            try {
+                const q = query(collection(db, "feedback"), where("userId", "==", currentUserId), orderBy("createdAt", "desc"));
+                const querySnapshot = await getDocs(q);
+                
+                if (querySnapshot.empty) {
+                    feedbackHistoryList.innerHTML = `<p>Bạn chưa gửi góp ý nào.</p>`;
+                    return;
+                }
+
+                feedbackHistoryList.innerHTML = '';
+                querySnapshot.forEach(doc => {
+                    const data = doc.data();
+                    const item = document.createElement('div');
+                    item.className = 'history-item';
+                    
+                    let replyHtml = '';
+                    if (data.reply) {
+                        replyHtml = `<div class="admin-reply"><strong>Phản hồi từ Admin:</strong><br>${data.reply}</div>`;
+                    }
+
+                    item.innerHTML = `
+                        <div class="history-item-header">
+                            <span>${data.createdAt.toDate().toLocaleString('vi-VN')}</span>
+                            <span class="status">Trạng thái: ${data.status}</span>
+                        </div>
+                        <p><strong>Nội dung đã gửi:</strong><br>${data.message}</p>
+                        ${replyHtml}
+                    `;
+                    feedbackHistoryList.appendChild(item);
+                });
+            } catch (error) {
+                console.error("Error fetching feedback history:", error);
+                feedbackHistoryList.innerHTML = `<p style="color: red;">Lỗi khi tải lịch sử.</p>`;
+            }
+        }
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                currentUserId = user.uid;
+                const userRef = doc(db, "users", user.uid);
+                const docSnap = await getDoc(userRef);
+
+                if (docSnap.exists()) {
+                    const userData = docSnap.data();
+                    const displayName = user.displayName || userData.displayName;
+                    userDisplayName.textContent = displayName;
+                    userEmail.textContent = user.email;
+                    userAvatar.textContent = displayName.charAt(0).toUpperCase();
+                    
+                    if (user.email === 'mindbox.steam@gmail.com') {
+                        announcementBtn.style.display = 'flex';
+                    }
+
+                    await loadUserProjects(currentUserId);
+                    await loadLatestAnnouncement();
+                    loader.classList.add('hidden');
+                    dashboardContainer.classList.add('loaded');
+                } else { window.location.href = 'login.html'; }
+            } else { window.location.href = 'login.html'; }
+        });
+
+        logoutBtn.addEventListener('click', () => signOut(auth));
+        createNewProjectBtn.addEventListener('click', () => window.location.href = 'create-project.html');
+        
+        // --- Feedback Modal Logic ---
+        feedbackBtn.addEventListener('click', () => {
+            feedbackModal.classList.add('visible');
+            loadFeedbackHistory();
+        });
+        closeFeedbackModalBtn.addEventListener('click', () => feedbackModal.classList.remove('visible'));
+        feedbackModal.addEventListener('click', (e) => { if (e.target === feedbackModal) feedbackModal.classList.remove('visible') });
+
+        feedbackForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const type = document.getElementById('feedback-type').value;
+            const message = document.getElementById('feedback-message').value;
+            try {
+                await addDoc(collection(db, "feedback"), { userId: currentUserId, type, message, status: 'new', createdAt: new Date() });
+                alert('Cảm ơn bạn đã gửi góp ý!');
+                feedbackForm.reset();
+                loadFeedbackHistory();
+            } catch (error) {
+                alert('Đã có lỗi xảy ra, vui lòng thử lại.');
+            }
+        });
+
+        // Tab switching in feedback modal
+        feedbackModal.querySelector('.modal-tabs').addEventListener('click', (e) => {
+            if (e.target.classList.contains('tab-btn')) {
+                feedbackModal.querySelector('.tab-btn.active').classList.remove('active');
+                e.target.classList.add('active');
+                feedbackModal.querySelector('.tab-content.active').classList.remove('active');
+                document.getElementById(e.target.dataset.tab).classList.add('active');
+            }
+        });
+
+        // --- Announcement Modal Logic (Admin) ---
+        announcementBtn.addEventListener('click', () => announcementModal.classList.add('visible'));
+        closeAnnouncementModalBtn.addEventListener('click', () => announcementModal.classList.remove('visible'));
+        announcementModal.addEventListener('click', (e) => { if (e.target === announcementModal) announcementModal.classList.remove('visible') });
+
+        announcementForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const message = document.getElementById('announcement-message').value;
+            try {
+                await addDoc(collection(db, "announcements"), { message, sentBy: currentUserId, createdAt: new Date() });
+                alert('Đã gửi thông báo thành công!');
+                announcementForm.reset();
+                announcementModal.classList.remove('visible');
+                await loadLatestAnnouncement();
+            } catch (error) {
+                alert('Đã có lỗi xảy ra.');
+            }
+        });
+        
+        closeNotificationBtn.addEventListener('click', () => {
+            notificationBanner.style.display = 'none';
+        });
+
+    </script>
+</body>
+</html>

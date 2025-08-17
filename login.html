@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng nhập / Đăng ký - MindBox 2.0</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="https://i.ibb.co/s9wPgpNd/B-1.png">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-color: #4A90E2;
+            --light-color: #FFF;
+            --dark-color: #333;
+            --grey-color: #f4f4f4;
+            --error-color: #e74c3c;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Be Vietnam Pro', sans-serif;
+            background-color: var(--grey-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .auth-container {
+            background-color: var(--light-color);
+            padding: 2.5rem 3rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 420px;
+            text-align: center;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+
+        .logo-container { margin-bottom: 1.5rem; }
+        .logo-container img { width: 180px; }
+        .form-container { transition: opacity 0.4s ease-in-out, transform 0.4s ease-in-out; }
+        #register-form { display: none; }
+        h2 { margin-bottom: 1.5rem; color: var(--dark-color); font-weight: 700; }
+        .input-group { margin-bottom: 1rem; text-align: left; }
+        .input-group input { width: 100%; padding: 0.8rem 1rem; border: 1px solid #ccc; border-radius: 8px; font-size: 1rem; font-family: 'Be Vietnam Pro', sans-serif; transition: border-color 0.3s, box-shadow 0.3s; }
+        .input-group input:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2); }
+        .options { display: flex; justify-content: flex-end; align-items: center; font-size: 0.9rem; margin-bottom: 1.5rem; }
+        .options a { color: var(--primary-color); text-decoration: none; }
+        .options a:hover { text-decoration: underline; }
+        
+        .btn { display: flex; justify-content: center; align-items: center; gap: 10px; width: 100%; padding: 0.8rem; border: none; border-radius: 8px; font-size: 1rem; font-weight: 700; cursor: pointer; transition: all 0.3s; }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .btn:active { transform: translateY(0px) scale(0.98); box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .btn-primary { background-color: var(--primary-color); color: var(--light-color); }
+        .btn-primary:hover { background-color: #357ABD; }
+        .divider { display: flex; align-items: center; text-align: center; color: #aaa; margin: 1.5rem 0; font-size: 12px; }
+        .divider::before, .divider::after { content: ''; flex: 1; border-bottom: 1px solid #ddd; }
+        .divider:not(:empty)::before { margin-right: .5em; }
+        .divider:not(:empty)::after { margin-left: .5em; }
+        .btn-google { background-color: #FFF; color: #757575; border: 1px solid #ddd; }
+        .btn-google img { width: 20px; }
+        .toggle-form { margin-top: 1.5rem; font-size: 0.9rem; }
+        .toggle-form a { color: var(--primary-color); font-weight: 700; cursor: pointer; }
+        .toggle-form a:hover { text-decoration: underline; }
+        .message-area-wrapper { min-height: 45px; }
+        .message { padding: 10px; border-radius: 5px; margin-bottom: 1rem; font-size: 0.9rem; opacity: 0; transform: translateY(-10px); animation: slideIn 0.4s ease-out forwards; }
+        .message.error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .message.success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        
+        @keyframes fadeIn { to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideIn { to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <div class="logo-container">
+            <a href="index.html"><img src="https://i.ibb.co/Psr9y1dM/B.png" alt="MindBox Logo"></a>
+        </div>
+        <div id="message-area" class="message-area-wrapper"></div>
+
+        <!-- Login Form -->
+        <div id="login-form" class="form-container">
+            <h2>Đăng nhập</h2>
+            <form id="login-form-element">
+                <div class="input-group"><input type="email" id="login-email" placeholder="Email" required></div>
+                <div class="input-group"><input type="password" id="login-password" placeholder="Mật khẩu" required></div>
+                <div class="options"><a href="#" id="forgot-password-link">Quên mật khẩu?</a></div>
+                <button type="submit" class="btn btn-primary">Đăng nhập</button>
+            </form>
+            <div class="divider">HOẶC</div>
+            <button class="btn btn-google" id="google-login-btn"><img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google logo"><span>Đăng nhập với Google</span></button>
+            <p class="toggle-form">Chưa có tài khoản? <a id="show-register">Đăng ký ngay</a></p>
+        </div>
+
+        <!-- Register Form -->
+        <div id="register-form" class="form-container">
+            <h2>Đăng ký</h2>
+            <form id="register-form-element">
+                <div class="input-group"><input type="email" id="register-email" placeholder="Email" required></div>
+                <div class="input-group"><input type="password" id="register-password" placeholder="Mật khẩu" required></div>
+                <button type="submit" class="btn btn-primary">Đăng ký</button>
+            </form>
+            <p class="toggle-form">Đã có tài khoản? <a id="show-login">Đăng nhập</a></p>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDulczem0AHC0X6f0QBnztjk76Ikvdu9aA",
+            authDomain: "mindbox-steam.firebaseapp.com",
+            projectId: "mindbox-steam",
+            storageBucket: "mindbox-steam.appspot.com",
+            messagingSenderId: "356560060266",
+            appId: "1:356560060266:web:b65a671cab786aca43af13"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const googleProvider = new GoogleAuthProvider();
+
+        const loginForm = document.getElementById('login-form');
+        const registerForm = document.getElementById('register-form');
+        const showRegisterLink = document.getElementById('show-register');
+        const showLoginLink = document.getElementById('show-login');
+        const messageArea = document.getElementById('message-area');
+
+        function switchForms(showRegister) {
+            clearMessages();
+            loginForm.style.display = showRegister ? 'none' : 'block';
+            registerForm.style.display = showRegister ? 'block' : 'none';
+        }
+
+        showRegisterLink.addEventListener('click', () => switchForms(true));
+        showLoginLink.addEventListener('click', () => switchForms(false));
+
+        function showMessage(type, text) { messageArea.innerHTML = `<div class="message ${type}">${text}</div>`; }
+        function clearMessages() { messageArea.innerHTML = ''; }
+
+        async function createUserDocument(user) {
+            const userRef = doc(db, "users", user.uid);
+            await setDoc(userRef, {
+                uid: user.uid,
+                email: user.email,
+                displayName: user.displayName || user.email.split('@')[0],
+                role: "teacher", // Default role
+                createdAt: new Date()
+            });
+            redirectToDashboard();
+        }
+
+        function redirectToDashboard() {
+            window.location.href = 'overview.html';
+        }
+
+        // --- Email/Password Registration ---
+        document.getElementById('register-form-element').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            clearMessages();
+            const email = document.getElementById('register-email').value;
+            const password = document.getElementById('register-password').value;
+
+            try {
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                await createUserDocument(userCredential.user);
+            } catch (error) {
+                showMessage('error', getFirebaseErrorMessage(error));
+            }
+        });
+
+        // --- Email/Password Login ---
+        document.getElementById('login-form-element').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            clearMessages();
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+                redirectToDashboard();
+            } catch (error) {
+                showMessage('error', getFirebaseErrorMessage(error));
+            }
+        });
+
+        // --- Google Sign-In ---
+        document.getElementById('google-login-btn').addEventListener('click', async () => {
+            try {
+                const result = await signInWithPopup(auth, googleProvider);
+                const user = result.user;
+                const userRef = doc(db, "users", user.uid);
+                const docSnap = await getDoc(userRef);
+
+                if (docSnap.exists()) {
+                    redirectToDashboard();
+                } else {
+                    await createUserDocument(user);
+                }
+            } catch (error) {
+                showMessage('error', getFirebaseErrorMessage(error));
+            }
+        });
+
+        // --- Forgot Password ---
+        document.getElementById('forgot-password-link').addEventListener('click', (e) => {
+            e.preventDefault();
+            clearMessages();
+            const email = document.getElementById('login-email').value;
+            if (!email) {
+                showMessage('error', 'Vui lòng nhập email để khôi phục mật khẩu.');
+                return;
+            }
+            sendPasswordResetEmail(auth, email)
+                .then(() => showMessage('success', 'Đã gửi email khôi phục. Vui lòng kiểm tra hộp thư.'))
+                .catch((error) => showMessage('error', getFirebaseErrorMessage(error)));
+        });
+        
+        function getFirebaseErrorMessage(error) {
+            switch (error.code) {
+                case 'auth/invalid-email': return 'Địa chỉ email không hợp lệ.';
+                case 'auth/user-not-found':
+                case 'auth/wrong-password': return 'Email hoặc mật khẩu không chính xác.';
+                case 'auth/email-already-in-use': return 'Email này đã được sử dụng.';
+                case 'auth/weak-password': return 'Mật khẩu quá yếu (ít nhất 6 ký tự).';
+                case 'auth/too-many-requests': return 'Quá nhiều lần thử. Vui lòng thử lại sau.';
+                default: return 'Đã có lỗi xảy ra. Vui lòng thử lại.';
+            }
+        }
+    </script>
+</body>
+</html>

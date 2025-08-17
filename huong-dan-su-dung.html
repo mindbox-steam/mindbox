@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hướng dẫn sử dụng MindBox Tương tác</title>
+    <link rel="icon" type="image/png" href="https://i.ibb.co/s9wPgpNd/B-1.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Be Vietnam Pro', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        .step-item.active {
+            background-color: #4A90E2;
+            color: white;
+            transform: translateX(4px);
+        }
+        .step-item.active .step-icon {
+            background-color: white;
+            color: #4A90E2;
+        }
+        .content-panel {
+            display: none;
+        }
+        .content-panel.active {
+            display: block;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <div class="container mx-auto p-4 md:p-8 max-w-7xl">
+        <header class="text-center mb-8">
+            <img src="https://i.ibb.co/WWn2bhYt/H-ng-Sinh-nh-t-B-n-thuy-t-tr-nh-C-c-s-ki-n-v-M-i-quan-t-m-c-bi-t.png" alt="MindBox Logo" class="mx-auto mb-4 w-48">
+            <h1 class="text-4xl font-bold text-gray-900">Chào mừng đến với MindBox</h1>
+            <p class="text-lg text-gray-600 mt-2">Hướng dẫn tương tác giúp bạn bắt đầu</p>
+        </header>
+
+        <main id="guide-container" class="bg-white rounded-2xl shadow-lg overflow-hidden">
+            <div id="main-guide">
+                <div class="flex flex-col md:flex-row min-h-[600px]">
+                    <nav id="main-nav" class="w-full md:w-1/4 bg-gray-50 p-6 border-r border-gray-200">
+                        <h3 class="text-lg font-bold mb-4 text-gray-700">Quy trình sử dụng</h3>
+                        <ul class="space-y-2">
+                            <li><a href="#step-1" class="step-item flex items-center p-3 rounded-lg transition-all duration-200 hover:bg-gray-200">
+                                <span class="step-icon w-8 h-8 rounded-full bg-gray-200 text-gray-600 font-bold text-sm flex items-center justify-center mr-3">1</span>
+                                <span>Đăng ký & Đăng nhập</span>
+                            </a></li>
+                            <li><a href="#step-2" class="step-item flex items-center p-3 rounded-lg transition-all duration-200 hover:bg-gray-200">
+                                <span class="step-icon w-8 h-8 rounded-full bg-gray-200 text-gray-600 font-bold text-sm flex items-center justify-center mr-3">2</span>
+                                <span>Cài đặt API Key</span>
+                            </a></li>
+                            <li><a href="#step-3" class="step-item flex items-center p-3 rounded-lg transition-all duration-200 hover:bg-gray-200">
+                                <span class="step-icon w-8 h-8 rounded-full bg-gray-200 text-gray-600 font-bold text-sm flex items-center justify-center mr-3">3</span>
+                                <span>Tạo Game mới</span>
+                            </a></li>
+                            <li><a href="#step-4" class="step-item flex items-center p-3 rounded-lg transition-all duration-200 hover:bg-gray-200">
+                                <span class="step-icon w-8 h-8 rounded-full bg-gray-200 text-gray-600 font-bold text-sm flex items-center justify-center mr-3">4</span>
+                                <span>Chia sẻ Game</span>
+                            </a></li>
+                             <li><a href="#step-5" class="step-item flex items-center p-3 rounded-lg transition-all duration-200 hover:bg-gray-200">
+                                <span class="step-icon w-8 h-8 rounded-full bg-gray-200 text-gray-600 font-bold text-sm flex items-center justify-center mr-3">5</span>
+                                <span>Góp ý & Phản hồi</span>
+                            </a></li>
+                        </ul>
+                    </nav>
+                    <div id="main-content" class="w-full md:w-3/4 p-8 md:p-12">
+                        <div id="step-1" class="content-panel">
+                            <h2 class="text-3xl font-bold mb-4">1. Đăng ký và Đăng nhập</h2>
+                            <p class="text-gray-600 mb-6">Bắt đầu hành trình của bạn với MindBox chỉ trong vài bước đơn giản.</p>
+                            <ol class="list-decimal list-inside space-y-4 text-lg">
+                                <li>Truy cập <a href="https://mindbox-steam.netlify.app/login.html" target="_blank" class="text-blue-600 font-semibold hover:underline">trang đăng nhập</a>.</li>
+                                <li>Chọn "Đăng ký ngay" và điền thông tin của bạn.</li>
+                                <li>Hoàn tất đăng ký. Giờ đây bạn đã có thể đăng nhập và khám phá các tính năng tuyệt vời!</li>
+                            </ol>
+                        </div>
+                        <div id="step-2" class="content-panel">
+                            <h2 class="text-3xl font-bold mb-4">2. Cài đặt API Key (Quan trọng!)</h2>
+                            <p class="text-gray-600 mb-6">Để khai thác sức mạnh của AI, bạn cần kết nối tài khoản Google Gemini của mình.</p>
+                            <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-r-lg mb-6">
+                                <p class="text-yellow-800">API Key là một chuỗi ký tự bí mật, cho phép MindBox sử dụng AI thay mặt bạn. Việc này đảm bảo tính riêng tư và bảo mật.</p>
+                            </div>
+                            <ol class="list-decimal list-inside space-y-4 text-lg">
+                                <li>Từ menu bên trái, chọn <span class="font-semibold">Cài đặt</span>.</li>
+                                <li>Trong mục "Quản lý API Keys", điền tên gợi nhớ và dán API Key của bạn vào.</li>
+                                <li>Nhấn <span class="font-bold bg-blue-100 text-blue-800 px-2 py-1 rounded">Thêm Key</span>. Bạn đã sẵn sàng để sáng tạo!</li>
+                            </ol>
+                        </div>
+                        <div id="step-3" class="content-panel">
+                            <h2 class="text-3xl font-bold mb-4">3. Tạo một Dự án Game mới</h2>
+                            <p class="text-gray-600 mb-6">Biến ý tưởng giảng dạy thành những trò chơi hấp dẫn.</p>
+                            <div class="border rounded-lg p-6">
+                                <h4 class="font-bold text-xl mb-4">Phương thức 1: Tạo bằng AI (Khuyên dùng)</h4>
+                                <ol class="list-decimal list-inside space-y-3">
+                                    <li>Nhấp vào nút <span class="font-semibold text-blue-600">"AI Hỗ trợ"</span>.</li>
+                                    <li>Điền đầy đủ thông tin về Lớp, Môn học, và Nội dung.</li>
+                                    <li>Hệ thống sẽ tự tạo một câu lệnh (prompt) tối ưu.</li>
+                                    <li>Nhấn <span class="font-bold bg-blue-100 text-blue-800 px-2 py-1 rounded">Tạo Game</span> và chờ AI trổ tài!</li>
+                                </ol>
+                                <hr class="my-6">
+                                <h4 class="font-bold text-xl mb-4">Phương thức 2: Nhập code có sẵn</h4>
+                                <p>Nếu bạn đã có sẵn mã nguồn HTML cho một game, chỉ cần dán vào tab "Nhập code có sẵn" và tạo dự án.</p>
+                            </div>
+                            <div class="mt-6 bg-green-50 border-l-4 border-green-400 p-4 rounded-r-lg">
+                                <p class="text-green-800"><span class="font-bold">Mẹo:</span> Sau khi AI tạo game, bạn có thể tiếp tục "trò chuyện" với AI để tinh chỉnh game theo ý muốn, ví dụ: "thêm 5 câu hỏi nữa".</p>
+                            </div>
+                        </div>
+                        <div id="step-4" class="content-panel">
+                            <h2 class="text-3xl font-bold mb-4">4. Chia sẻ Game của bạn</h2>
+                            <p class="text-gray-600 mb-6">Gửi game bạn vừa tạo đến cho mọi người cùng chơi.</p>
+                            <ol class="list-decimal list-inside space-y-4 text-lg">
+                                <li>Vào mục <span class="font-semibold">"Dự án của tôi"</span>.</li>
+                                <li>Tìm game bạn muốn chia sẻ và nhấn nút <span class="font-bold bg-blue-100 text-blue-800 px-2 py-1 rounded">"Chia sẻ"</span>.</li>
+                                <li>Một cửa sổ sẽ hiện ra với đường link duy nhất của game.</li>
+                                <li>Sao chép link này và gửi cho bất kỳ ai bạn muốn!</li>
+                            </ol>
+                        </div>
+                        <div id="step-5" class="content-panel">
+                            <h2 class="text-3xl font-bold mb-4">5. Góp ý và Xem Phản hồi</h2>
+                            <p class="text-gray-600 mb-6">Ý kiến của bạn giúp MindBox ngày càng tốt hơn.</p>
+                             <div class="border rounded-lg p-6">
+                                <p class="mb-4">Tại trang Tổng quan, nhấp vào thẻ <span class="font-semibold text-yellow-600">"Góp ý / Báo lỗi"</span>.</p>
+                                <ul class="list-disc list-inside space-y-3">
+                                    <li><span class="font-semibold">Gửi Góp Ý Mới:</span> Điền vào biểu mẫu để gửi yêu cầu hoặc báo lỗi.</li>
+                                    <li><span class="font-semibold">Lịch Sử Góp Ý:</span> Theo dõi trạng thái các góp ý đã gửi và xem câu trả lời từ Admin.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const mainNav = document.getElementById('main-nav');
+            const mainContentContainer = document.getElementById('main-content');
+
+            function updateNav(navElement, contentContainer) {
+                const navLinks = navElement.querySelectorAll('.step-item');
+                const contentPanels = contentContainer.querySelectorAll('.content-panel');
+
+                navLinks.forEach(link => {
+                    link.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        
+                        navLinks.forEach(item => item.classList.remove('active'));
+                        this.classList.add('active');
+                        
+                        contentPanels.forEach(panel => panel.classList.remove('active'));
+                        
+                        const targetId = this.getAttribute('href').substring(1);
+                        document.getElementById(targetId).classList.add('active');
+                    });
+                });
+                
+                // Activate the first step by default
+                if (navLinks.length > 0) {
+                    navLinks[0].click();
+                }
+            }
+            
+            updateNav(mainNav, mainContentContainer);
+        });
+    </script>
+</body>
+</html>

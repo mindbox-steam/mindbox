@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MindBox Game</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="https://i.ibb.co/s9wPgpNd/B-1.png">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-color: #4A90E2;
+            --main-bg: #f4f7fa;
+            --text-color: #333;
+            --border-color: #e6e9f0;
+            --error-color: #dc3545;
+        }
+        
+        body {
+            font-family: 'Be Vietnam Pro', sans-serif;
+            background-color: var(--main-bg);
+            color: var(--text-color);
+            margin: 0;
+            padding: 2rem;
+            display: flex;
+            justify-content: center;
+            align-items: center; /* Updated to center vertically */
+            min-height: 100vh;
+        }
+        
+        #game-wrapper {
+            width: 100%;
+            max-width: 960px;
+            background-color: #fff;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        /* --- Loader and Message Styles --- */
+        .status-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--main-bg);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid var(--border-color);
+            border-top: 5px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        .status-message {
+            margin-top: 1rem;
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: var(--text-light, #777);
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+    
+    <!-- CSS from Firestore will be injected here -->
+    <style id="dynamic-css"></style>
+</head>
+<body>
+    <!-- Loading/Error Message Overlay -->
+    <div id="status-overlay" class="status-overlay">
+        <div id="loader" class="spinner"></div>
+        <p id="status-message" class="status-message">Đang tải game...</p>
+    </div>
+
+    <!-- Game Wrapper -->
+    <div id="game-wrapper">
+        <!-- HTML from Firestore will be injected here -->
+        <div id="game-container"></div>
+    </div>
+    
+    <!-- JavaScript from Firestore will be injected and executed here -->
+    <script type="module">
+        // Import Firebase functions
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDulczem0AHC0X6f0QBnztjk76Ikvdu9aA",
+            authDomain: "mindbox-steam.firebaseapp.com",
+            projectId: "mindbox-steam",
+            storageBucket: "mindbox-steam.appspot.com",
+            messagingSenderId: "356560060266",
+            appId: "1:356560060266:web:b65a671cab786aca43af13"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // DOM Elements
+        const gameContainer = document.getElementById('game-container');
+        const dynamicCss = document.getElementById('dynamic-css');
+        const statusOverlay = document.getElementById('status-overlay');
+        const loader = document.getElementById('loader');
+        const statusMessage = document.getElementById('status-message');
+
+        // --- Helper function to decode Base64 with Unicode support ---
+        function base64ToUnicode(str) {
+            // Going backwards: from bytestream, to percent-encoding, to original string.
+            return decodeURIComponent(atob(str).split('').map(function(c) {
+                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+            }).join(''));
+        }
+
+        // --- Main Function to Load and Play Game ---
+        async function loadGame() {
+            try {
+                // 1. Get project ID from URL
+                const urlParams = new URLSearchParams(window.location.search);
+                const projectId = urlParams.get('id');
+
+                if (!projectId) {
+                    throw new Error("Không tìm thấy ID của game.");
+                }
+
+                // 2. Fetch project data from Firestore
+                const projectRef = doc(db, "projects", projectId);
+                const docSnap = await getDoc(projectRef);
+
+                if (!docSnap.exists()) {
+                    throw new Error("Game không tồn tại hoặc đã bị xóa.");
+                }
+                
+                const projectData = docSnap.data();
+                
+                // 3. Inject code into the page
+                document.title = projectData.title || "MindBox Game";
+                dynamicCss.innerHTML = projectData.cssCode || '';
+                gameContainer.innerHTML = projectData.htmlCode || '';
+
+                // 4. Decode and execute the game logic
+                if (projectData.jsCode) {
+                    const decodedJs = base64ToUnicode(projectData.jsCode);
+                    const script = document.createElement('script');
+                    script.innerHTML = `try { ${decodedJs} } catch (e) { console.error('Lỗi thực thi mã game:', e); }`;
+                    document.body.appendChild(script);
+                }
+                
+                // 5. Hide loader
+                statusOverlay.style.display = 'none';
+
+            } catch (error) {
+                console.error("Error loading game:", error);
+                loader.style.display = 'none'; // Hide spinner
+                statusMessage.textContent = `Lỗi: ${error.message}`;
+                statusMessage.style.color = 'var(--error-color)';
+            }
+        }
+
+        // Run the function when the page loads
+        loadGame();
+    </script>
+</body>
+</html>

@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Quản lý Góp ý - MindBox</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="https://i.ibb.co/s9wPgpNd/B-1.png">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary-color: #4A90E2;
+            --sidebar-bg: #ffffff;
+            --main-bg: #f4f7fa;
+            --text-color: #333;
+            --text-light: #777;
+            --border-color: #e6e9f0;
+            --shadow-color: rgba(60, 64, 67, 0.15);
+            --status-new-bg: #e3f2fd;
+            --status-new-text: #1e88e5;
+            --status-progress-bg: #fff8e1;
+            --status-progress-text: #f57f17;
+            --status-replied-bg: #e8f5e9;
+            --status-replied-text: #2e7d32;
+            --status-done-bg: #e0f2f1;
+            --status-done-text: #00796b;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Be Vietnam Pro', sans-serif;
+            background-color: var(--main-bg);
+            color: var(--text-color);
+            overflow: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        
+        /* --- Animations --- */
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes scaleIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+
+        /* --- Main Layout --- */
+        .dashboard-container { display: flex; height: 100vh; animation: fadeIn 0.5s ease-out forwards; }
+        .sidebar { width: 260px; background-color: var(--sidebar-bg); padding: 1rem 1.5rem; display: flex; flex-direction: column; border-right: 1px solid var(--border-color); }
+        .main-content { flex: 1; padding: 2.5rem 3.5rem; overflow-y: auto; }
+
+        /* --- Sidebar --- */
+        .sidebar-header { text-align: center; padding: 0; margin-bottom: 1.5rem; }
+        .sidebar-header img { width: 160px; height: auto; }
+        .user-profile { display: flex; align-items: center; margin-bottom: 1.5rem; padding: 0.5rem; }
+        .user-profile .avatar { width: 40px; height: 40px; border-radius: 50%; margin-right: 15px; object-fit: cover; background-color: var(--primary-color); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.2rem; flex-shrink: 0; }
+        .user-info h4 { font-size: 1rem; font-weight: 700; }
+        .user-info p { font-size: 0.8rem; color: var(--text-light); }
+        .nav-menu { flex: 1; }
+        .nav-menu a { display: flex; align-items: center; padding: 0.9rem 1rem; text-decoration: none; color: var(--text-light); font-weight: 500; border-radius: 8px; margin-bottom: 0.25rem; transition: background-color 0.2s, color 0.2s; }
+        .nav-menu a:hover { background-color: var(--main-bg); color: var(--text-color); }
+        .nav-menu a.active { background-color: var(--primary-color); color: #fff; }
+        .logout-btn { display: flex; align-items: center; padding: 0.9rem 1rem; border: none; background: none; width: 100%; text-align: left; cursor: pointer; color: var(--text-light); font-weight: 500; border-radius: 8px; font-size: 1rem; font-family: 'Be Vietnam Pro', sans-serif; margin-top: auto; transition: background-color 0.2s, color 0.2s; }
+        .logout-btn:hover { background-color: #ffebee; color: #c62828; }
+
+        /* --- Main Content --- */
+        .page-header h1 { font-size: 2rem; font-weight: 700; margin-bottom: 1rem; animation: slideUp 0.6s ease-out forwards; }
+        .filter-tabs { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; animation: slideUp 0.6s ease-out 0.1s forwards; opacity: 0; animation-fill-mode: forwards; }
+        .filter-btn { background-color: #fff; border: 1px solid var(--border-color); padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.9rem; font-weight: 500; cursor: pointer; transition: all 0.2s; }
+        .filter-btn.active { background-color: var(--primary-color); color: #fff; border-color: var(--primary-color); }
+        .feedback-list-container { background-color: #fff; border-radius: 12px; box-shadow: 0 1px 2px 0 var(--shadow-color), 0 2px 6px 2px var(--shadow-color); overflow: hidden; animation: slideUp 0.7s ease-out 0.2s forwards; opacity: 0; animation-fill-mode: forwards; }
+        .feedback-list-header { display: grid; grid-template-columns: 3fr 1fr 1fr 1fr; padding: 1rem 1.5rem; background-color: var(--main-bg); color: var(--text-light); font-weight: 700; font-size: 0.9rem; border-bottom: 1px solid var(--border-color); }
+        .feedback-item { display: grid; grid-template-columns: 3fr 1fr 1fr 1fr; align-items: center; padding: 1.2rem 1.5rem; border-bottom: 1px solid var(--border-color); cursor: pointer; transition: background-color 0.2s, transform 0.2s; opacity: 0; animation: slideUp 0.5s ease-out forwards; user-select: none; }
+        .feedback-item:last-child { border-bottom: none; }
+        .feedback-item:hover { background-color: var(--main-bg); transform: translateX(5px); }
+        .status-badge { padding: 0.4rem 0.8rem; border-radius: 16px; font-size: 0.8rem; font-weight: 700; text-align: center; display: inline-flex; align-items: center; gap: 0.4rem; }
+        .status-new { background-color: var(--status-new-bg); color: var(--status-new-text); }
+        .status-progress { background-color: var(--status-progress-bg); color: var(--status-progress-text); }
+        .status-replied { background-color: var(--status-replied-bg); color: var(--status-replied-text); }
+        .status-done { background-color: var(--status-done-bg); color: var(--status-done-text); }
+        .placeholder { text-align: center; padding: 3rem; color: var(--text-light); }
+
+        /* --- Modal --- */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; display: none; justify-content: center; align-items: center; opacity: 0; transition: opacity 0.3s ease; }
+        .modal-overlay.visible { display: flex; opacity: 1; }
+        .modal-content { background: #fff; padding: 2.5rem; border-radius: 16px; width: 90%; max-width: 600px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); animation: scaleIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+        .modal-header h2 { margin: 0; font-size: 1.8rem; }
+        .close-btn { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-light); transition: transform 0.2s; }
+        .close-btn:hover { transform: scale(1.2); }
+        .modal-body p { margin-bottom: 1rem; background-color: #f9f9f9; padding: 1rem; border-radius: 8px; border: 1px solid var(--border-color); }
+        .form-group { margin-bottom: 1.5rem; }
+        .form-group label { display: block; font-weight: 700; margin-bottom: 0.5rem; }
+        textarea, select { width: 100%; padding: 0.8rem; border-radius: 8px; border: 1px solid var(--border-color); font-family: inherit; font-size: 1rem; transition: border-color 0.2s, box-shadow 0.2s; }
+        textarea { min-height: 120px; }
+        textarea:focus, select:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2); }
+        .btn { padding: 0.8rem 1.5rem; border: none; border-radius: 8px; font-size: 1rem; font-weight: 700; cursor: pointer; transition: all 0.2s; }
+        .btn-primary { background-color: var(--primary-color); color: #fff; }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .btn:active { transform: translateY(0) scale(0.98); }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <aside class="sidebar">
+            <div class="sidebar-header"><a href="admin.html"><img src="https://i.ibb.co/WWn2bhYt/H-ng-Sinh-nh-t-B-n-thuy-t-tr-nh-C-c-s-ki-n-v-M-i-quan-t-m-c-bi-t.png" alt="MindBox Logo"></a></div>
+            <div class="user-profile">
+                <div id="user-avatar" class="avatar"></div>
+                <div class="user-info">
+                    <h4 id="user-display-name">Admin</h4>
+                    <p id="user-email">...</p>
+                </div>
+            </div>
+            <nav class="nav-menu"><a href="admin.html" class="active"><i class="fas fa-inbox"></i> Góp ý</a></nav>
+            <button class="logout-btn" id="logout-btn"><i class="fas fa-sign-out-alt"></i> Đăng xuất</button>
+        </aside>
+        <main class="main-content">
+            <header class="page-header"><h1>Hòm thư Góp ý / Báo lỗi</h1></header>
+            <div class="filter-tabs">
+                <button class="filter-btn active" data-status="all">Tất cả</button>
+                <button class="filter-btn" data-status="new">Mới</button>
+                <button class="filter-btn" data-status="progress">Đang thực hiện</button>
+                <button class="filter-btn" data-status="replied">Đã trả lời</button>
+                <button class="filter-btn" data-status="done">Đã hoàn thành</button>
+            </div>
+            <div class="feedback-list-container">
+                <div class="feedback-list-header">
+                    <div>NGƯỜI GỬI</div>
+                    <div>PHÂN LOẠI</div>
+                    <div>NGÀY GỬI</div>
+                    <div>TRẠNG THÁI</div>
+                </div>
+                <div id="feedback-list">
+                     <div class="placeholder">Đang tải danh sách góp ý...</div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div id="reply-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Chi tiết Góp ý</h2>
+                <button id="close-modal-btn" class="close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p><strong>Từ:</strong> <span id="feedback-user-email"></span></p>
+                <p><strong>Nội dung:</strong><br><span id="feedback-content"></span></p>
+                <form id="reply-form">
+                    <div class="form-group">
+                        <label for="reply-content">Nội dung trả lời</label>
+                        <textarea id="reply-content" placeholder="Nhập nội dung trả lời..." required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="feedback-status">Cập nhật trạng thái</label>
+                        <select id="feedback-status">
+                            <option value="new">Mới</option>
+                            <option value="progress">Đang thực hiện</option>
+                            <option value="replied">Đã trả lời</option>
+                            <option value="done">Đã hoàn thành</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="margin-top:1rem;">Lưu thay đổi</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { getFirestore, collection, query, where, orderBy, getDocs, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDulczem0AHC0X6f0QBnztjk76Ikvdu9aA",
+            authDomain: "mindbox-steam.firebaseapp.com",
+            projectId: "mindbox-steam",
+            storageBucket: "mindbox-steam.appspot.com",
+            messagingSenderId: "356560060266",
+            appId: "1:356560060266:web:b65a671cab786aca43af13"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        const userAvatar = document.getElementById('user-avatar');
+        const userDisplayName = document.getElementById('user-display-name');
+        const userEmail = document.getElementById('user-email');
+        const feedbackList = document.getElementById('feedback-list');
+        const replyModal = document.getElementById('reply-modal');
+        const closeModalBtn = document.getElementById('close-modal-btn');
+        const replyForm = document.getElementById('reply-form');
+        const filterTabs = document.querySelector('.filter-tabs');
+        
+        let currentFeedbackId = null;
+        let currentFilter = 'all';
+
+        const statusMap = {
+            new: { text: 'Mới', icon: 'fa-lightbulb' },
+            progress: { text: 'Đang thực hiện', icon: 'fa-tasks' },
+            replied: { text: 'Đã trả lời', icon: 'fa-reply' },
+            done: { text: 'Đã hoàn thành', icon: 'fa-check-circle' }
+        };
+
+        async function loadFeedback(statusFilter = 'all') {
+            try {
+                feedbackList.innerHTML = '<div class="placeholder">Đang tải...</div>';
+                let q;
+                const feedbackCollection = collection(db, "feedback");
+                if (statusFilter === 'all') {
+                    q = query(feedbackCollection, orderBy("createdAt", "desc"));
+                } else {
+                    q = query(feedbackCollection, where("status", "==", statusFilter), orderBy("createdAt", "desc"));
+                }
+                
+                const querySnapshot = await getDocs(q);
+                feedbackList.innerHTML = '';
+                if (querySnapshot.empty) {
+                    feedbackList.innerHTML = '<p class="placeholder">Không có góp ý nào phù hợp.</p>';
+                    return;
+                }
+                
+                let delay = 0;
+                for (const feedbackDoc of querySnapshot.docs) {
+                    const data = feedbackDoc.data();
+                    const userSnap = await getDoc(doc(db, "users", data.userId));
+                    const user = userSnap.data();
+                    const statusInfo = statusMap[data.status] || { text: data.status, icon: 'fa-question-circle' };
+
+                    const item = document.createElement('div');
+                    item.className = 'feedback-item';
+                    item.dataset.id = feedbackDoc.id;
+                    item.style.animationDelay = `${delay}s`;
+                    delay += 0.05;
+
+                    item.innerHTML = `
+                        <div><strong>${user.displayName || 'N/A'}</strong><br><span style="color: var(--text-light); font-size: 0.9rem;">${user.email}</span></div>
+                        <div>${data.type}</div>
+                        <div>${data.createdAt.toDate().toLocaleString('vi-VN')}</div>
+                        <div><span class="status-badge status-${data.status}"><i class="fas ${statusInfo.icon}"></i> ${statusInfo.text}</span></div>
+                    `;
+                    item.addEventListener('click', () => openReplyModal(feedbackDoc.id));
+                    feedbackList.appendChild(item);
+                }
+            } catch (error) {
+                console.error("Error loading feedback:", error);
+                feedbackList.innerHTML = '<p class="placeholder" style="color: var(--error-color);">Không thể tải dữ liệu.</p>';
+            }
+        }
+
+        async function openReplyModal(feedbackId) {
+            currentFeedbackId = feedbackId;
+            const feedbackRef = doc(db, "feedback", feedbackId);
+            const feedbackSnap = await getDoc(feedbackRef);
+            const data = feedbackSnap.data();
+            const userSnap = await getDoc(doc(db, "users", data.userId));
+            document.getElementById('feedback-user-email').textContent = userSnap.data().email;
+            document.getElementById('feedback-content').textContent = data.message;
+            document.getElementById('reply-content').value = data.reply || '';
+            document.getElementById('feedback-status').value = data.status || 'new';
+            replyModal.classList.add('visible');
+        }
+
+        closeModalBtn.addEventListener('click', () => replyModal.classList.remove('visible'));
+        replyModal.addEventListener('click', (e) => {
+            if(e.target === replyModal) replyModal.classList.remove('visible');
+        });
+
+        replyForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const replyContent = document.getElementById('reply-content').value;
+            const newStatus = document.getElementById('feedback-status').value;
+            const feedbackRef = doc(db, "feedback", currentFeedbackId);
+            try {
+                await updateDoc(feedbackRef, {
+                    reply: replyContent,
+                    status: newStatus,
+                    repliedAt: new Date()
+                });
+                alert('Đã cập nhật thành công!');
+                replyModal.classList.remove('visible');
+                loadFeedback(currentFilter);
+            } catch (error) {
+                alert('Lỗi: Không thể cập nhật.');
+                console.error("Error updating feedback:", error);
+            }
+        });
+
+        filterTabs.addEventListener('click', (e) => {
+            if (e.target.classList.contains('filter-btn')) {
+                document.querySelector('.filter-btn.active').classList.remove('active');
+                e.target.classList.add('active');
+                currentFilter = e.target.dataset.status;
+                loadFeedback(currentFilter);
+            }
+        });
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                if (user.email === 'mindbox.steam@gmail.com') {
+                    userDisplayName.textContent = "MindBox Admin";
+                    userEmail.textContent = user.email;
+                    userAvatar.textContent = 'M';
+                    loadFeedback();
+                } else {
+                    alert("Bạn không có quyền truy cập trang này.");
+                    await signOut(auth);
+                    window.location.href = 'login.html';
+                }
+            } else {
+                window.location.href = 'login.html';
+            }
+        });
+
+        document.getElementById('logout-btn').addEventListener('click', () => signOut(auth));
+    </script>
+</body>
+</html>

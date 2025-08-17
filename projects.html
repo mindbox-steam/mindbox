@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dự án của tôi - MindBox</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="https://i.ibb.co/s9wPgpNd/B-1.png">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <style>
+        :root {
+            --primary-color: #4A90E2;
+            --sidebar-bg: #ffffff;
+            --main-bg: #f4f7fa;
+            --text-color: #333;
+            --text-light: #777;
+            --border-color: #e6e9f0;
+            --shadow-color: rgba(60, 64, 67, 0.15);
+            --error-color: #c62828;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Be Vietnam Pro', sans-serif;
+            background-color: var(--main-bg);
+            color: var(--text-color);
+        }
+        
+        /* --- Main Layout --- */
+        .dashboard-container { display: flex; height: 100vh; }
+        .sidebar { width: 260px; background-color: var(--sidebar-bg); padding: 1rem 1.5rem; display: flex; flex-direction: column; border-right: 1px solid var(--border-color); }
+        .main-content { flex: 1; padding: 2.5rem 3.5rem; overflow-y: auto; }
+
+        /* --- Sidebar (Same as overview) --- */
+        .sidebar-header { text-align: center; padding: 0; margin-bottom: 1.5rem; }
+        .sidebar-header img { width: 160px; height: auto; }
+        .user-profile { display: flex; align-items: center; margin-bottom: 1.5rem; padding: 0.5rem; }
+        .user-profile .avatar { width: 40px; height: 40px; border-radius: 50%; margin-right: 15px; object-fit: cover; background-color: var(--primary-color); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.2rem; flex-shrink: 0; }
+        .user-info h4 { font-size: 1rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px; }
+        .user-info p { font-size: 0.8rem; color: var(--text-light); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px; }
+        .nav-menu { flex: 1; }
+        .nav-menu a { display: flex; align-items: center; padding: 0.9rem 1rem; text-decoration: none; color: var(--text-light); font-weight: 500; border-radius: 8px; margin-bottom: 0.25rem; transition: background-color 0.3s, color 0.3s; }
+        .nav-menu a i { width: 20px; margin-right: 15px; text-align: center; }
+        .nav-menu a:hover { background-color: var(--main-bg); color: var(--text-color); }
+        .nav-menu a.active { background-color: var(--primary-color); color: #fff; }
+        .logout-btn { display: flex; align-items: center; padding: 0.9rem 1rem; border: none; background: none; width: 100%; text-align: left; cursor: pointer; color: var(--text-light); font-weight: 500; border-radius: 8px; font-size: 1rem; font-family: 'Be Vietnam Pro', sans-serif; margin-top: auto; }
+        .logout-btn:hover { background-color: #ffebee; color: #c62828; }
+
+        /* --- Main Content: Projects --- */
+        .page-header { 
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2.5rem;
+        }
+        .page-header h1 { font-size: 2rem; font-weight: 700; }
+        
+        .btn { padding: 0.7rem 1.2rem; border: none; border-radius: 8px; font-size: 0.9rem; font-weight: 700; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; gap: 0.5rem; }
+        .btn-primary { background-color: var(--primary-color); color: #fff; }
+        .btn-primary:hover { opacity: 0.9; }
+
+        .project-list-container {
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 1px 2px 0 var(--shadow-color), 0 2px 6px 2px var(--shadow-color);
+            overflow: hidden;
+        }
+        
+        .project-list-header {
+            display: grid;
+            grid-template-columns: 4fr 2fr 2fr;
+            padding: 1rem 1.5rem;
+            background-color: var(--main-bg);
+            color: var(--text-light);
+            font-weight: 700;
+            font-size: 0.9rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .project-item {
+            display: grid;
+            grid-template-columns: 4fr 2fr 2fr;
+            align-items: center;
+            padding: 1.2rem 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .project-item:last-child {
+            border-bottom: none;
+        }
+        
+        .project-title {
+            font-weight: 700;
+        }
+        
+        .project-actions {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: flex-end;
+        }
+        
+        .action-btn {
+            background: none;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 0.4rem 0.8rem;
+            cursor: pointer;
+            color: var(--text-light);
+            transition: all 0.2s;
+        }
+        
+        .action-btn:hover {
+            background-color: var(--main-bg);
+            color: var(--text-color);
+            border-color: #ccc;
+        }
+        
+        .action-btn.delete:hover {
+            background-color: #ffebee;
+            color: var(--error-color);
+            border-color: var(--error-color);
+        }
+        
+        .placeholder {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-light);
+        }
+        
+        /* --- Share Modal --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            display: none; /* Hidden by default */
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .modal-overlay.visible {
+            display: flex;
+            opacity: 1;
+        }
+        .modal-content {
+            background: #fff;
+            padding: 2rem;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            transform: scale(0.95);
+            transition: transform 0.3s ease;
+        }
+        .modal-overlay.visible .modal-content {
+            transform: scale(1);
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        .modal-header h2 {
+            margin: 0;
+            font-size: 1.5rem;
+        }
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-light);
+        }
+        .share-link-container {
+            display: flex;
+            gap: 0.5rem;
+        }
+        #share-link-input {
+            flex-grow: 1;
+            padding: 0.7rem;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 1rem;
+            background-color: var(--main-bg);
+        }
+
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <a href="overview.html"><img src="https://i.ibb.co/WWn2bhYt/H-ng-Sinh-nh-t-B-n-thuy-t-tr-nh-C-c-s-ki-n-v-M-i-quan-t-m-c-bi-t.png" alt="MindBox Logo"></a>
+            </div>
+            <div class="user-profile">
+                <div id="user-avatar" class="avatar"></div>
+                <div class="user-info">
+                    <h4 id="user-display-name">...</h4>
+                    <p id="user-email">...</p>
+                </div>
+            </div>
+            <nav class="nav-menu">
+                <a href="overview.html"><i class="fas fa-home"></i> Tổng quan</a>
+                <a href="projects.html" class="active"><i class="fas fa-folder"></i> Dự án của tôi</a>
+                <a href="archive.html"><i class="fas fa-archive"></i> Lưu trữ</a>
+                <a href="settings.html"><i class="fas fa-cog"></i> Cài đặt</a>
+            </nav>
+            <button class="logout-btn" id="logout-btn"><i class="fas fa-sign-out-alt"></i> Đăng xuất</button>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="page-header">
+                <h1>Dự án của tôi</h1>
+                <a href="create-project.html" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Tạo dự án mới
+                </a>
+            </header>
+            
+            <div class="project-list-container">
+                <div class="project-list-header">
+                    <div>TÊN DỰ ÁN</div>
+                    <div>NGÀY TẠO</div>
+                    <div>HÀNH ĐỘNG</div>
+                </div>
+                <div id="projects-list">
+                    <!-- Projects will be dynamically inserted here -->
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <!-- Share Modal -->
+    <div id="share-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Chia sẻ dự án</h2>
+                <button id="close-modal-btn" class="close-btn">&times;</button>
+            </div>
+            <p style="margin-bottom: 1rem; color: var(--text-light);">Sao chép và gửi đường link này cho người chơi.</p>
+            <div class="share-link-container">
+                <input type="text" id="share-link-input" readonly>
+                <button id="copy-link-btn" class="btn btn-primary">
+                    <i class="fas fa-copy"></i> Sao chép
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        // Import Firebase functions
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { getFirestore, collection, query, where, getDocs, deleteDoc, doc, updateDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDulczem0AHC0X6f0QBnztjk76Ikvdu9aA",
+            authDomain: "mindbox-steam.firebaseapp.com",
+            projectId: "mindbox-steam",
+            storageBucket: "mindbox-steam.appspot.com",
+            messagingSenderId: "356560060266",
+            appId: "1:356560060266:web:b65a671cab786aca43af13"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // DOM Elements
+        const userAvatar = document.getElementById('user-avatar');
+        const userDisplayName = document.getElementById('user-display-name');
+        const userEmail = document.getElementById('user-email');
+        const logoutBtn = document.getElementById('logout-btn');
+        const projectsList = document.getElementById('projects-list');
+        const shareModal = document.getElementById('share-modal');
+        const closeModalBtn = document.getElementById('close-modal-btn');
+        const shareLinkInput = document.getElementById('share-link-input');
+        const copyLinkBtn = document.getElementById('copy-link-btn');
+        let currentUserId = null;
+
+        // --- Fetch and Display Projects ---
+        async function fetchAndDisplayProjects(userId) {
+            projectsList.innerHTML = '<p class="placeholder">Đang tải danh sách dự án...</p>';
+            try {
+                const projectsRef = collection(db, "projects");
+                const q = query(projectsRef, where("ownerId", "==", userId), where("isArchived", "==", false));
+                const querySnapshot = await getDocs(q);
+                
+                projectsList.innerHTML = ''; 
+                
+                if (querySnapshot.empty) {
+                    projectsList.innerHTML = '<p class="placeholder">Bạn chưa có dự án nào.</p>';
+                } else {
+                    querySnapshot.forEach(doc => {
+                        const project = doc.data();
+                        const projectItem = document.createElement('div');
+                        projectItem.classList.add('project-item');
+                        projectItem.dataset.id = doc.id;
+                        
+                        const createdDate = project.createdAt?.toDate ? project.createdAt.toDate().toLocaleDateString('vi-VN') : 'N/A';
+
+                        projectItem.innerHTML = `
+                            <div class="project-title">${project.title || 'Dự án không tên'}</div>
+                            <div>${createdDate}</div>
+                            <div class="project-actions">
+                                <button class="action-btn share-btn">Chia sẻ</button>
+                                <button class="action-btn archive-btn">Lưu trữ</button>
+                                <button class="action-btn delete delete-btn">Xóa</button>
+                            </div>
+                        `;
+                        projectsList.appendChild(projectItem);
+                    });
+                }
+            } catch (error) {
+                console.error("Error fetching projects:", error);
+                projectsList.innerHTML = '<p class="placeholder" style="color: var(--error-color);">Lỗi khi tải danh sách dự án.</p>';
+            }
+        }
+
+        // --- Auth state listener ---
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                const userRef = doc(db, "users", user.uid);
+                const docSnap = await getDoc(userRef);
+                if (docSnap.exists()) {
+                    currentUserId = user.uid;
+                    const displayName = user.displayName || 'Người dùng mới';
+                    userDisplayName.textContent = displayName;
+                    userEmail.textContent = user.email;
+                    if (user.photoURL) {
+                        userAvatar.innerHTML = `<img src="${user.photoURL}" alt="Avatar" style="width:100%; height:100%; border-radius:50%;">`;
+                    } else {
+                        userAvatar.textContent = displayName.charAt(0).toUpperCase();
+                    }
+                    await fetchAndDisplayProjects(currentUserId);
+                } else {
+                    window.location.href = 'login.html';
+                }
+            } else {
+                window.location.href = 'login.html';
+            }
+        });
+        
+        // --- Project Actions Handler ---
+        projectsList.addEventListener('click', async (e) => {
+            const target = e.target;
+            const projectItem = target.closest('.project-item');
+            if (!projectItem || !currentUserId) return;
+            
+            const projectId = projectItem.dataset.id;
+            const projectRef = doc(db, 'projects', projectId);
+
+            if (target.classList.contains('delete-btn')) {
+                if (confirm("Bạn có chắc chắn muốn xóa vĩnh viễn dự án này không?")) {
+                    try {
+                        await deleteDoc(projectRef);
+                        projectItem.remove();
+                    } catch (error) {
+                        alert("Không thể xóa dự án.");
+                    }
+                }
+            }
+
+            if (target.classList.contains('archive-btn')) {
+                 if (confirm("Bạn có muốn chuyển dự án này vào kho lưu trữ không?")) {
+                    try {
+                        await updateDoc(projectRef, { isArchived: true });
+                        projectItem.remove();
+                    } catch (error) {
+                        alert("Không thể lưu trữ dự án.");
+                    }
+                }
+            }
+
+            if (target.classList.contains('share-btn')) {
+                const playPageUrl = new URL('play.html', window.location.href);
+                playPageUrl.searchParams.set('id', projectId);
+                shareLinkInput.value = playPageUrl.href;
+                shareModal.classList.add('visible');
+            }
+        });
+
+        // --- Modal Logic ---
+        function closeModal() {
+            shareModal.classList.remove('visible');
+        }
+
+        closeModalBtn.addEventListener('click', closeModal);
+        shareModal.addEventListener('click', (e) => {
+            if (e.target === shareModal) {
+                closeModal();
+            }
+        });
+        
+        copyLinkBtn.addEventListener('click', () => {
+            shareLinkInput.select();
+            document.execCommand('copy');
+            copyLinkBtn.innerHTML = '<i class="fas fa-check"></i> Đã sao chép!';
+            setTimeout(() => {
+                copyLinkBtn.innerHTML = '<i class="fas fa-copy"></i> Sao chép';
+            }, 2000);
+        });
+
+        // --- Logout ---
+        logoutBtn.addEventListener('click', () => {
+            signOut(auth).catch(error => console.error("Sign-out error", error));
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cài đặt - MindBox</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="https://i.ibb.co/s9wPgpNd/B-1.png">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <style>
+        :root {
+            --primary-color: #4A90E2;
+            --sidebar-bg: #ffffff;
+            --main-bg: #f4f7fa;
+            --text-color: #333;
+            --text-light: #777;
+            --border-color: #e6e9f0;
+            --shadow-color: rgba(60, 64, 67, 0.15);
+            --error-color: #c62828;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Be Vietnam Pro', sans-serif;
+            background-color: var(--main-bg);
+            color: var(--text-color);
+        }
+        
+        /* --- Main Layout --- */
+        .dashboard-container { display: flex; height: 100vh; }
+        .sidebar { width: 260px; background-color: var(--sidebar-bg); padding: 1rem 1.5rem; display: flex; flex-direction: column; border-right: 1px solid var(--border-color); }
+        .main-content { flex: 1; padding: 2.5rem 3.5rem; overflow-y: auto; }
+
+        /* --- Sidebar --- */
+        .sidebar-header { text-align: center; padding: 0; margin-bottom: 1.5rem; }
+        .sidebar-header img { width: 160px; height: auto; }
+        .user-profile { display: flex; align-items: center; margin-bottom: 1.5rem; padding: 0.5rem; }
+        .user-profile .avatar { width: 40px; height: 40px; border-radius: 50%; margin-right: 15px; object-fit: cover; background-color: var(--primary-color); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.2rem; flex-shrink: 0; }
+        .user-info h4 { font-size: 1rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px; }
+        .user-info p { font-size: 0.8rem; color: var(--text-light); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px; }
+        .nav-menu { flex: 1; }
+        .nav-menu a { display: flex; align-items: center; padding: 0.9rem 1rem; text-decoration: none; color: var(--text-light); font-weight: 500; border-radius: 8px; margin-bottom: 0.25rem; transition: background-color 0.3s, color 0.3s; }
+        .nav-menu a i { width: 20px; margin-right: 15px; text-align: center; }
+        .nav-menu a:hover { background-color: var(--main-bg); color: var(--text-color); }
+        .nav-menu a.active { background-color: var(--primary-color); color: #fff; }
+        .logout-btn { display: flex; align-items: center; padding: 0.9rem 1rem; border: none; background: none; width: 100%; text-align: left; cursor: pointer; color: var(--text-light); font-weight: 500; border-radius: 8px; font-size: 1rem; font-family: 'Be Vietnam Pro', sans-serif; margin-top: auto; }
+        .logout-btn:hover { background-color: #ffebee; color: #c62828; }
+
+        /* --- Main Content: Settings --- */
+        .page-header { margin-bottom: 2.5rem; }
+        .page-header h1 { font-size: 2rem; font-weight: 700; }
+        
+        .settings-card {
+            background-color: #fff;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 1px 2px 0 var(--shadow-color), 0 2px 6px 2px var(--shadow-color);
+            margin-bottom: 2rem;
+        }
+        
+        .settings-card h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 1rem;
+        }
+
+        .api-key-list { list-style: none; }
+        .api-key-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            background-color: var(--main-bg);
+        }
+        .api-key-info { display: flex; align-items: center; }
+        .api-key-info i { color: var(--primary-color); font-size: 1.5rem; margin-right: 1rem; }
+        .api-key-name { font-weight: 700; }
+        .api-key-masked { font-family: monospace; color: var(--text-light); font-size: 0.9rem; }
+        .delete-key-btn { background: none; border: none; color: var(--error-color); cursor: pointer; font-size: 1.2rem; transition: transform 0.2s; }
+        .delete-key-btn:hover { transform: scale(1.2); }
+
+        .form-group { margin-bottom: 1.5rem; }
+        .form-group label { display: block; font-weight: 700; margin-bottom: 0.5rem; }
+        .form-group input[type="text"], .form-group input[type="password"] {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        .btn { padding: 0.8rem 1.5rem; border: none; border-radius: 8px; font-size: 1rem; font-weight: 700; cursor: pointer; transition: all 0.3s; }
+        .btn-primary { background-color: var(--primary-color); color: #fff; }
+        .btn-primary:disabled { background-color: #ccc; cursor: not-allowed; }
+        .btn-primary:hover:not(:disabled) { opacity: 0.9; }
+        
+        #api-key-list-container .placeholder {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-light);
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <a href="overview.html"><img src="https://i.ibb.co/WWn2bhYt/H-ng-Sinh-nh-t-B-n-thuy-t-tr-nh-C-c-s-ki-n-v-M-i-quan-t-m-c-bi-t.png" alt="MindBox Logo"></a>
+            </div>
+            <div class="user-profile">
+                <div id="user-avatar" class="avatar"></div>
+                <div class="user-info">
+                    <h4 id="user-display-name">...</h4>
+                    <p id="user-email">...</p>
+                </div>
+            </div>
+            <nav class="nav-menu">
+                <a href="overview.html"><i class="fas fa-home"></i> Tổng quan</a>
+                <a href="projects.html"><i class="fas fa-folder"></i> Dự án của tôi</a>
+                <a href="archive.html"><i class="fas fa-archive"></i> Lưu trữ</a>
+                <a href="settings.html" class="active"><i class="fas fa-cog"></i> Cài đặt</a>
+            </nav>
+            <button class="logout-btn" id="logout-btn"><i class="fas fa-sign-out-alt"></i> Đăng xuất</button>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="page-header">
+                <h1>Cài đặt</h1>
+            </header>
+            
+            <div class="settings-card">
+                <h2>Thông tin cá nhân</h2>
+                <form id="profile-form">
+                    <div class="form-group">
+                        <label for="display-name">Tên hiển thị</label>
+                        <input type="text" id="display-name" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+                </form>
+            </div>
+
+            <div class="settings-card">
+                <h2>Quản lý API Keys</h2>
+                <div id="api-key-list-container">
+                    <!-- API Keys will be dynamically inserted here -->
+                </div>
+            </div>
+
+            <div class="settings-card" id="add-key-card">
+                <h2>Thêm API Key mới</h2>
+                <form id="add-api-key-form">
+                    <div class="form-group">
+                        <label for="api-key-name">Tên gợi nhớ</label>
+                        <input type="text" id="api-key-name" placeholder="Ví dụ: Key Gemini cá nhân" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="api-key-value">API Key</label>
+                        <input type="password" id="api-key-value" placeholder="Dán API Key của bạn vào đây" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary" id="add-key-btn">Thêm Key</button>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <script type="module">
+        // Import Firebase functions
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, query, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDulczem0AHC0X6f0QBnztjk76Ikvdu9aA",
+            authDomain: "mindbox-steam.firebaseapp.com",
+            projectId: "mindbox-steam",
+            storageBucket: "mindbox-steam.appspot.com",
+            messagingSenderId: "356560060266",
+            appId: "1:356560060266:web:b65a671cab786aca43af13"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // DOM Elements
+        const userAvatar = document.getElementById('user-avatar');
+        const userDisplayName = document.getElementById('user-display-name');
+        const userEmail = document.getElementById('user-email');
+        const logoutBtn = document.getElementById('logout-btn');
+        const profileForm = document.getElementById('profile-form');
+        const displayNameInput = document.getElementById('display-name');
+        const apiKeyListContainer = document.getElementById('api-key-list-container');
+        const addApiKeyForm = document.getElementById('add-api-key-form');
+        const addKeyBtn = document.getElementById('add-key-btn');
+        const addKeyCard = document.getElementById('add-key-card');
+        
+        let currentUserId = null;
+        const MAX_KEYS = 10;
+
+        // --- Fetch and Display API keys ---
+        async function fetchAndDisplayApiKeys(userId) {
+            apiKeyListContainer.innerHTML = '<p class="placeholder">Đang tải danh sách keys...</p>';
+            try {
+                const keysRef = collection(db, `users/${userId}/apiKeys`);
+                const querySnapshot = await getDocs(keysRef);
+                
+                apiKeyListContainer.innerHTML = ''; // Clear loading message
+                let keyCount = 0;
+                
+                if (querySnapshot.empty) {
+                    apiKeyListContainer.innerHTML = '<p class="placeholder">Bạn chưa thêm API Key nào.</p>';
+                } else {
+                    querySnapshot.forEach(doc => {
+                        keyCount++;
+                        const keyData = doc.data();
+                        const keyItem = document.createElement('li');
+                        keyItem.classList.add('api-key-item');
+                        keyItem.innerHTML = `
+                            <div class="api-key-info">
+                                <i class="fas fa-key"></i>
+                                <div>
+                                    <div class="api-key-name">${keyData.name}</div>
+                                    <div class="api-key-masked">...${keyData.key.slice(-4)}</div>
+                                </div>
+                            </div>
+                            <button class="delete-key-btn" data-id="${doc.id}"><i class="fas fa-trash-alt"></i></button>
+                        `;
+                        apiKeyListContainer.appendChild(keyItem);
+                    });
+                }
+                
+                // Disable form if key limit is reached
+                if (keyCount >= MAX_KEYS) {
+                    addKeyCard.style.display = 'none';
+                } else {
+                    addKeyCard.style.display = 'block';
+                }
+
+            } catch (error) {
+                console.error("Error fetching API keys:", error);
+                apiKeyListContainer.innerHTML = '<p class="placeholder" style="color: var(--error-color);">Lỗi khi tải danh sách keys.</p>';
+            }
+        }
+
+        // --- Auth state listener ---
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                const userRef = doc(db, "users", user.uid);
+                const docSnap = await getDoc(userRef);
+                if (docSnap.exists()) {
+                    currentUserId = user.uid;
+                    const userData = docSnap.data();
+                    const displayName = user.displayName || userData.displayName;
+                    
+                    userDisplayName.textContent = displayName;
+                    displayNameInput.value = displayName;
+                    userEmail.textContent = user.email;
+                    
+                    if (user.photoURL) {
+                        userAvatar.innerHTML = `<img src="${user.photoURL}" alt="Avatar" style="width:100%; height:100%; border-radius:50%;">`;
+                    } else {
+                        userAvatar.textContent = displayName.charAt(0).toUpperCase();
+                    }
+                    await fetchAndDisplayApiKeys(currentUserId);
+                } else {
+                    window.location.href = 'login.html';
+                }
+            } else {
+                window.location.href = 'login.html';
+            }
+        });
+        
+        // --- Profile Update ---
+        profileForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const newDisplayName = displayNameInput.value;
+            if (!auth.currentUser) return;
+
+            try {
+                await updateProfile(auth.currentUser, { displayName: newDisplayName });
+                const userRef = doc(db, "users", currentUserId);
+                await updateDoc(userRef, { displayName: newDisplayName });
+
+                alert("Cập nhật thông tin thành công!");
+                userDisplayName.textContent = newDisplayName;
+            } catch (error) {
+                console.error("Error updating profile:", error);
+                alert("Đã có lỗi xảy ra khi cập nhật thông tin.");
+            }
+        });
+
+        // --- Add API Key ---
+        addApiKeyForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (!currentUserId) return;
+
+            addKeyBtn.disabled = true;
+            addKeyBtn.textContent = 'Đang thêm...';
+
+            const keyName = document.getElementById('api-key-name').value;
+            const keyValue = document.getElementById('api-key-value').value;
+
+            try {
+                const keysRef = collection(db, `users/${currentUserId}/apiKeys`);
+                await addDoc(keysRef, {
+                    name: keyName,
+                    key: keyValue,
+                    createdAt: new Date()
+                });
+                
+                addApiKeyForm.reset();
+                await fetchAndDisplayApiKeys(currentUserId);
+
+            } catch (error) {
+                console.error("Error adding API key:", error);
+                alert("Không thể thêm API Key. Vui lòng thử lại.");
+            } finally {
+                addKeyBtn.disabled = false;
+                addKeyBtn.textContent = 'Thêm Key';
+            }
+        });
+
+        // --- Delete API Key ---
+        apiKeyListContainer.addEventListener('click', async (e) => {
+            const deleteButton = e.target.closest('.delete-key-btn');
+            if (deleteButton && currentUserId) {
+                const keyId = deleteButton.dataset.id;
+                
+                if (confirm("Bạn có chắc chắn muốn xóa API Key này không?")) {
+                    try {
+                        await deleteDoc(doc(db, `users/${currentUserId}/apiKeys`, keyId));
+                        await fetchAndDisplayApiKeys(currentUserId);
+                    } catch (error) {
+                        console.error("Error deleting API key:", error);
+                        alert("Không thể xóa API Key. Vui lòng thử lại.");
+                    }
+                }
+            }
+        });
+
+        // --- Logout ---
+        logoutBtn.addEventListener('click', () => signOut(auth));
+    </script>
+</body>
+</html>

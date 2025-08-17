@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tạo dự án mới - MindBox</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="https://i.ibb.co/s9wPgpNd/B-1.png">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <style>
+        :root {
+            --primary-color: #4A90E2;
+            --sidebar-bg: #ffffff;
+            --main-bg: #f4f7fa;
+            --text-color: #333;
+            --text-light: #777;
+            --border-color: #e6e9f0;
+            --shadow-color: rgba(60, 64, 67, 0.15);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Be Vietnam Pro', sans-serif;
+            background-color: var(--main-bg);
+            color: var(--text-color);
+        }
+        
+        /* --- Main Layout --- */
+        .dashboard-container { display: flex; height: 100vh; }
+        .sidebar { width: 260px; background-color: var(--sidebar-bg); padding: 1rem 1.5rem; display: flex; flex-direction: column; border-right: 1px solid var(--border-color); }
+        .main-content { flex: 1; padding: 2.5rem 3.5rem; overflow-y: auto; }
+
+        /* --- Sidebar --- */
+        .sidebar-header { text-align: center; padding: 0; margin-bottom: 1.5rem; }
+        .sidebar-header img { width: 160px; height: auto; }
+        .user-profile { display: flex; align-items: center; margin-bottom: 1.5rem; padding: 0.5rem; }
+        .user-profile .avatar { width: 40px; height: 40px; border-radius: 50%; margin-right: 15px; object-fit: cover; background-color: var(--primary-color); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.2rem; flex-shrink: 0; }
+        .user-info h4 { font-size: 1rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px; }
+        .user-info p { font-size: 0.8rem; color: var(--text-light); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px; }
+        .nav-menu { flex: 1; }
+        .nav-menu a { display: flex; align-items: center; padding: 0.9rem 1rem; text-decoration: none; color: var(--text-light); font-weight: 500; border-radius: 8px; margin-bottom: 0.25rem; transition: background-color 0.3s, color 0.3s; }
+        .nav-menu a i { width: 20px; margin-right: 15px; text-align: center; }
+        .nav-menu a:hover { background-color: var(--main-bg); color: var(--text-color); }
+        .nav-menu a.active { background-color: var(--primary-color); color: #fff; }
+        .logout-btn { display: flex; align-items: center; padding: 0.9rem 1rem; border: none; background: none; width: 100%; text-align: left; cursor: pointer; color: var(--text-light); font-weight: 500; border-radius: 8px; font-size: 1rem; font-family: 'Be Vietnam Pro', sans-serif; margin-top: auto; }
+        .logout-btn:hover { background-color: #ffebee; color: #c62828; }
+
+        /* --- Main Content --- */
+        .page-header { margin-bottom: 2.5rem; }
+        .page-header h1 { font-size: 2rem; font-weight: 700; }
+        
+        .form-container {
+            background-color: #fff;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 1px 2px 0 var(--shadow-color), 0 2px 6px 2px var(--shadow-color);
+        }
+        
+        .form-group { margin-bottom: 1.5rem; }
+        .form-group label { display: block; font-weight: 700; margin-bottom: 0.5rem; }
+        .form-group .label-with-helper { display: flex; justify-content: space-between; align-items: center; }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: 'Be Vietnam Pro', sans-serif;
+        }
+        
+        .btn { padding: 0.8rem 1.5rem; border: none; border-radius: 8px; font-size: 1rem; font-weight: 700; cursor: pointer; transition: all 0.3s; }
+        .btn-primary { background-color: var(--primary-color); color: #fff; }
+        .btn-primary:hover { opacity: 0.9; }
+        .btn-secondary { background-color: transparent; color: var(--primary-color); font-size: 0.9rem; padding: 0; }
+
+        /* --- Tabs --- */
+        .tab-buttons { display: flex; border-bottom: 1px solid var(--border-color); margin-bottom: 1.5rem; }
+        .tab-btn { padding: 0.8rem 1.5rem; border: none; background: none; cursor: pointer; font-size: 1rem; font-weight: 500; color: var(--text-light); position: relative; }
+        .tab-btn.active { color: var(--primary-color); font-weight: 700; }
+        .tab-btn.active::after { content: ''; position: absolute; bottom: -1px; left: 0; width: 100%; height: 2px; background-color: var(--primary-color); }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        #full-html-code { min-height: 300px; font-family: monospace; }
+
+        /* --- Review Section --- */
+        #review-section { display: none; margin-top: 2rem; }
+        .review-layout { display: grid; grid-template-columns: 2fr 1fr; gap: 2rem; height: 60vh; }
+        .demo-container { display: flex; flex-direction: column; }
+        .demo-container h3, .chatbot-container h3 { margin-bottom: 1rem; }
+        #game-demo { width: 100%; height: 100%; border: 1px solid var(--border-color); border-radius: 8px; }
+        .chatbot-container { display: flex; flex-direction: column; background-color: #fff; border-radius: 12px; box-shadow: 0 1px 2px 0 var(--shadow-color), 0 2px 6px 2px var(--shadow-color); padding: 1.5rem; }
+        #chat-messages { flex-grow: 1; overflow-y: auto; margin-bottom: 1rem; border: 1px solid var(--border-color); border-radius: 8px; padding: 1rem; }
+        #chat-form { display: flex; gap: 0.5rem; }
+        #chat-input { flex-grow: 1; }
+        .review-actions { margin-top: 1.5rem; display: flex; gap: 1rem; }
+
+        /* --- Loading Overlay --- */
+        #loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 10000; color: white; }
+        .loading-content { width: 90%; max-width: 500px; text-align: center; }
+        #loading-status { font-size: 1.2rem; margin-bottom: 1.5rem; }
+        .progress-bar { width: 100%; background-color: #555; border-radius: 5px; overflow: hidden; }
+        #progress { width: 0%; height: 10px; background-color: var(--primary-color); transition: width 0.3s ease; }
+        
+        /* --- Prompt Helper Modal --- */
+        #prompt-helper-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); display: none; justify-content: center; align-items: center; z-index: 9999; opacity: 0; transition: opacity 0.3s ease; }
+        #prompt-helper-modal.visible { display: flex; opacity: 1; }
+        .modal-content { background: #fff; padding: 2rem; border-radius: 12px; width: 90%; max-width: 500px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); transform: scale(0.95); transition: transform 0.3s ease; }
+        #prompt-helper-modal.visible .modal-content { transform: scale(1); }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+        .modal-header h2 { margin: 0; font-size: 1.5rem; }
+        .close-btn { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-light); }
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+        .checkbox-group { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; padding: 0.5rem; border: 1px solid var(--border-color); border-radius: 8px; }
+        .checkbox-group label { display: flex; align-items: center; gap: 0.5rem; font-weight: 400; }
+        .checkbox-group input { width: auto; }
+    </style>
+</head>
+<body>
+    <div id="loading-overlay">
+        <div class="loading-content">
+            <p id="loading-status">Đang kết nối với AI...</p>
+            <div class="progress-bar"><div id="progress"></div></div>
+        </div>
+    </div>
+
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <a href="overview.html"><img src="https://i.ibb.co/WWn2bhYt/H-ng-Sinh-nh-t-B-n-thuy-t-tr-nh-C-c-s-ki-n-v-M-i-quan-t-m-c-bi-t.png" alt="MindBox Logo"></a>
+            </div>
+            <div class="user-profile">
+                <div id="user-avatar" class="avatar"></div>
+                <div class="user-info">
+                    <h4 id="user-display-name">...</h4>
+                    <p id="user-email">...</p>
+                </div>
+            </div>
+            <nav class="nav-menu">
+                <a href="overview.html"><i class="fas fa-home"></i> Tổng quan</a>
+                <a href="projects.html" class="active"><i class="fas fa-folder"></i> Dự án của tôi</a>
+                <a href="archive.html"><i class="fas fa-archive"></i> Lưu trữ</a>
+                <a href="settings.html"><i class="fas fa-cog"></i> Cài đặt</a>
+            </nav>
+            <button class="logout-btn" id="logout-btn"><i class="fas fa-sign-out-alt"></i> Đăng xuất</button>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="page-header">
+                <h1>Tạo dự án mới</h1>
+            </header>
+            
+            <div id="initial-form-container" class="form-container">
+                <form id="create-project-form">
+                    <div class="form-group">
+                        <label for="project-title">Tên dự án</label>
+                        <input type="text" id="project-title" placeholder="Ví dụ: Game Lịch sử Việt Nam" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="api-key-select">Chọn API Key</label>
+                        <select id="api-key-select" required></select>
+                    </div>
+
+                    <div class="tab-buttons">
+                        <button type="button" class="tab-btn active" data-tab="ai-creator">Tạo bằng AI</button>
+                        <button type="button" class="tab-btn" data-tab="code-importer">Nhập code có sẵn</button>
+                    </div>
+    
+                    <!-- AI Creator Tab -->
+                    <div id="ai-creator" class="tab-content active">
+                        <div class="form-group">
+                            <div class="label-with-helper">
+                                <label for="ai-prompt">Yêu cầu AI</label>
+                                <button type="button" class="btn btn-secondary" id="open-prompt-helper-btn"><i class="fas fa-magic"></i> AI Hỗ trợ</button>
+                            </div>
+                            <textarea id="ai-prompt" rows="5" placeholder="Nhập yêu cầu của bạn hoặc dùng AI Hỗ trợ để tạo..." required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Tạo Game</button>
+                    </div>
+    
+                    <!-- Code Importer Tab -->
+                    <div id="code-importer" class="tab-content">
+                        <div class="form-group">
+                            <label for="full-html-code">Dán toàn bộ mã nguồn HTML</label>
+                            <textarea id="full-html-code" placeholder="Dán toàn bộ mã nguồn của bạn (bao gồm HTML, CSS, JS) vào đây."></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Tạo từ Code</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Review Section (hidden by default) -->
+            <section id="review-section">
+                <div class="review-layout">
+                    <div class="demo-container">
+                        <h3>Bản xem trước (Demo)</h3>
+                        <iframe id="game-demo" title="Game Demo"></iframe>
+                    </div>
+                    <div class="chatbot-container">
+                        <h3>Chỉnh sửa với AI</h3>
+                        <div id="chat-messages"></div>
+                        <form id="chat-form">
+                            <input type="text" id="chat-input" placeholder="Nhập yêu cầu chỉnh sửa..." required>
+                            <button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane"></i></button>
+                        </form>
+                    </div>
+                </div>
+                <div class="review-actions">
+                    <button id="save-project-btn" class="btn btn-primary">Lưu dự án</button>
+                    <button id="discard-btn" class="btn">Hủy bỏ</button>
+                </div>
+            </section>
+        </main>
+    </div>
+    
+    <!-- Prompt Helper Modal -->
+    <div id="prompt-helper-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>AI Hỗ trợ tạo Prompt</h2>
+                <button id="close-modal-btn" class="close-btn">&times;</button>
+            </div>
+            <form id="prompt-helper-form">
+                <div class="form-group">
+                    <label>Loại trò chơi (chọn một hoặc nhiều)</label>
+                    <div class="checkbox-group">
+                        <label><input type="checkbox" name="game-type" value="trắc nghiệm"> Trắc nghiệm</label>
+                        <label><input type="checkbox" name="game-type" value="nối từ"> Nối từ</label>
+                        <label><input type="checkbox" name="game-type" value="ô chữ"> Ô chữ</label>
+                        <label><input type="checkbox" name="game-type" value="điền vào chỗ trống"> Điền vào chỗ trống</label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="grade-level">Lớp</label>
+                    <select id="grade-level" required>
+                        <option value="Lớp 1">Lớp 1</option>
+                        <option value="Lớp 2">Lớp 2</option>
+                        <option value="Lớp 3">Lớp 3</option>
+                        <option value="Lớp 4">Lớp 4</option>
+                        <option value="Lớp 5">Lớp 5</option>
+                        <option value="Lớp 6">Lớp 6</option>
+                        <option value="Lớp 7">Lớp 7</option>
+                        <option value="Lớp 8">Lớp 8</option>
+                        <option value="Lớp 9">Lớp 9</option>
+                        <option value="Lớp 10">Lớp 10</option>
+                        <option value="Lớp 11">Lớp 11</option>
+                        <option value="Lớp 12">Lớp 12</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="subject">Môn học</label>
+                    <input type="text" id="subject" placeholder="Ví dụ: Tiếng Anh" required>
+                </div>
+                <div class="form-group">
+                    <label for="ai-topic">Nội dung chính</label>
+                    <input type="text" id="ai-topic" placeholder="Ví dụ: Câu điều kiện và câu bị động" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Tạo Prompt</button>
+            </form>
+        </div>
+    </div>
+
+    <script type="module">
+        // Import Firebase functions
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDulczem0AHC0X6f0QBnztjk76Ikvdu9aA",
+            authDomain: "mindbox-steam.firebaseapp.com",
+            projectId: "mindbox-steam",
+            storageBucket: "mindbox-steam.appspot.com",
+            messagingSenderId: "356560060266",
+            appId: "1:356560060266:web:b65a671cab786aca43af13"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // DOM Elements
+        const loadingOverlay = document.getElementById('loading-overlay');
+        const loadingStatus = document.getElementById('loading-status');
+        const progress = document.getElementById('progress');
+        const userAvatar = document.getElementById('user-avatar');
+        const userDisplayName = document.getElementById('user-display-name');
+        const userEmail = document.getElementById('user-email');
+        const logoutBtn = document.getElementById('logout-btn');
+        const initialFormContainer = document.getElementById('initial-form-container');
+        const createProjectForm = document.getElementById('create-project-form');
+        const reviewSection = document.getElementById('review-section');
+        const apiKeySelect = document.getElementById('api-key-select');
+        const gameDemo = document.getElementById('game-demo');
+        const chatForm = document.getElementById('chat-form');
+        const chatInput = document.getElementById('chat-input');
+        const chatMessages = document.getElementById('chat-messages');
+        const saveProjectBtn = document.getElementById('save-project-btn');
+        const discardBtn = document.getElementById('discard-btn');
+        const promptHelperModal = document.getElementById('prompt-helper-modal');
+        const openPromptHelperBtn = document.getElementById('open-prompt-helper-btn');
+        const closeModalBtn = document.getElementById('close-modal-btn');
+        const promptHelperForm = document.getElementById('prompt-helper-form');
+        const aiPromptTextarea = document.getElementById('ai-prompt');
+        const fullHtmlCodeTextarea = document.getElementById('full-html-code');
+        const tabButtons = document.querySelectorAll('.tab-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
+        
+        let currentUserId = null;
+        let currentGameCode = '';
+        let progressInterval;
+        let activeTab = 'ai-creator';
+
+        // --- Auth state listener ---
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                currentUserId = user.uid;
+                const displayName = user.displayName || 'Người dùng mới';
+                userDisplayName.textContent = displayName;
+                userEmail.textContent = user.email;
+                if (user.photoURL) {
+                    userAvatar.innerHTML = `<img src="${user.photoURL}" alt="Avatar" style="width:100%; height:100%; border-radius:50%;">`;
+                } else {
+                    userAvatar.textContent = displayName.charAt(0).toUpperCase();
+                }
+                populateApiKeys(currentUserId);
+            } else {
+                window.location.href = 'login.html';
+            }
+        });
+
+        async function populateApiKeys(userId) {
+            apiKeySelect.innerHTML = '<option value="" disabled selected>Đang tải...</option>';
+            try {
+                const keysRef = collection(db, `users/${userId}/apiKeys`);
+                const querySnapshot = await getDocs(keysRef);
+                apiKeySelect.innerHTML = '';
+                if (querySnapshot.empty) {
+                    apiKeySelect.innerHTML = '<option value="" disabled selected>Vui lòng thêm API Key</option>';
+                    return;
+                }
+                querySnapshot.forEach(doc => {
+                    const keyData = doc.data();
+                    const option = document.createElement('option');
+                    option.value = keyData.key;
+                    option.textContent = `${keyData.name} (...${keyData.key.slice(-4)})`;
+                    apiKeySelect.appendChild(option);
+                });
+            } catch (error) {
+                console.error("Error fetching API keys:", error);
+                apiKeySelect.innerHTML = '<option value="" disabled selected>Lỗi tải Keys</option>';
+            }
+        }
+
+        // --- Loading Simulation ---
+        function startLoading(statusText, duration) {
+            loadingOverlay.style.display = 'flex';
+            loadingStatus.textContent = statusText;
+            let currentProgress = 0;
+            progress.style.width = '0%';
+            
+            clearInterval(progressInterval);
+            progressInterval = setInterval(() => {
+                currentProgress += 100 / (duration / 100);
+                if (currentProgress <= 99) {
+                    progress.style.width = `${currentProgress}%`;
+                }
+            }, 100);
+        }
+
+        function completeLoading(statusText) {
+            clearInterval(progressInterval);
+            progress.style.width = '100%';
+            loadingStatus.textContent = statusText;
+            setTimeout(() => {
+                loadingOverlay.style.display = 'none';
+            }, 800);
+        }
+
+        // --- Tab Switching Logic ---
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                tabButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                activeTab = button.dataset.tab;
+                tabContents.forEach(content => content.classList.toggle('active', content.id === activeTab));
+                
+                aiPromptTextarea.required = (activeTab === 'ai-creator');
+                fullHtmlCodeTextarea.required = (activeTab === 'code-importer');
+            });
+        });
+
+        // --- Prompt Helper Modal Logic ---
+        openPromptHelperBtn.addEventListener('click', () => promptHelperModal.classList.add('visible'));
+        closeModalBtn.addEventListener('click', () => promptHelperModal.classList.remove('visible'));
+        promptHelperModal.addEventListener('click', (e) => {
+            if (e.target === promptHelperModal) {
+                promptHelperModal.classList.remove('visible');
+            }
+        });
+
+        promptHelperForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const selectedGameTypes = Array.from(document.querySelectorAll('input[name="game-type"]:checked')).map(cb => cb.value);
+            const gameType = selectedGameTypes.join(', ') || 'đa dạng';
+            const gradeLevel = document.getElementById('grade-level').value;
+            const subject = document.getElementById('subject').value;
+            const topic = document.getElementById('ai-topic').value;
+            
+            const generatedPrompt = `Chỉ hiển thị mã nguồn. Với vai trò là một chuyên gia thiết kế game giáo dục, hãy tạo một file game HTML hoàn chỉnh. YÊU CẦU BẮT BUỘC: Game phải dành cho học sinh "${gradeLevel}", thuộc môn học "${subject}", và có nội dung chính về "${topic}". Game phải thuộc thể loại "${gameType}". Game phải có tính tương tác, hấp dẫn và phù hợp với lứa tuổi. QUAN TRỌNG: Hãy sử dụng emoji hoặc inline SVG để minh họa thay vì dùng thẻ <img> hoặc link ảnh. Toàn bộ code CSS phải nằm trong thẻ <style> và JavaScript phải nằm trong thẻ <script>.`;
+            
+            aiPromptTextarea.value = generatedPrompt;
+            promptHelperModal.classList.remove('visible');
+        });
+
+        // --- Form Submission Logic ---
+        createProjectForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const duration = 300000; // 5 minutes
+            startLoading('AI đang xử lý yêu cầu...', duration);
+            
+            try {
+                let generatedHtml;
+                if (activeTab === 'ai-creator') {
+                    const apiKey = apiKeySelect.value;
+                    const initialPrompt = aiPromptTextarea.value;
+                    if (!apiKey || !initialPrompt) {
+                        throw new Error("Vui lòng chọn API Key và nhập yêu cầu.");
+                    }
+                    generatedHtml = await callGeminiApi(apiKey, initialPrompt, duration);
+                } else {
+                    generatedHtml = document.getElementById('full-html-code').value;
+                    if (!generatedHtml) {
+                        throw new Error("Vui lòng dán mã nguồn vào.");
+                    }
+                }
+
+                if (!generatedHtml) throw new Error("Không thể tạo hoặc lấy mã nguồn game.");
+
+                completeLoading('Hoàn tất!');
+                currentGameCode = generatedHtml;
+                updateDemo(currentGameCode);
+
+                initialFormContainer.style.display = 'none';
+                reviewSection.style.display = 'block';
+            } catch (error) {
+                clearInterval(progressInterval);
+                alert(`Lỗi: ${error.message}`);
+                loadingOverlay.style.display = 'none';
+            }
+        });
+        
+        // --- Chatbot Logic ---
+        chatForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const userMessage = chatInput.value;
+            if (!userMessage) return;
+            
+            addChatMessage('Bạn', userMessage);
+            chatInput.value = '';
+            
+            const duration = 300000;
+            startLoading('AI đang cập nhật game...', duration);
+
+            const apiKey = apiKeySelect.value;
+            const modificationPrompt = `Chỉ hiển thị mã nguồn. Dựa trên mã nguồn game HTML sau đây: \`\`\`html\n${currentGameCode}\n\`\`\`\nHãy thực hiện yêu cầu chỉnh sửa sau: "${userMessage}". Trả về mã nguồn HTML hoàn chỉnh đã được cập nhật.`;
+
+            try {
+                const updatedHtml = await callGeminiApi(apiKey, modificationPrompt, duration);
+                 if (!updatedHtml) throw new Error("AI không thể chỉnh sửa game.");
+                
+                completeLoading('Cập nhật hoàn tất!');
+                currentGameCode = updatedHtml;
+                updateDemo(currentGameCode);
+                addChatMessage('AI', 'Đã cập nhật game theo yêu cầu của bạn.');
+            } catch (error) {
+                clearInterval(progressInterval);
+                addChatMessage('AI', `Lỗi: ${error.message}`);
+                loadingOverlay.style.display = 'none';
+            }
+        });
+
+        // --- Review Actions ---
+        saveProjectBtn.addEventListener('click', async () => {
+            loadingOverlay.style.display = 'flex';
+            const projectTitle = document.getElementById('project-title').value;
+            const { htmlCode, cssCode, jsCode } = parseFullHtml(currentGameCode);
+
+            const projectData = {
+                title: projectTitle,
+                ownerId: currentUserId,
+                createdAt: new Date(),
+                isArchived: false,
+                playCount: 0,
+                htmlCode,
+                cssCode,
+                jsCode: unicodeToBase64(jsCode),
+                creationMethod: activeTab
+            };
+
+            try {
+                await addDoc(collection(db, "projects"), projectData);
+                window.location.href = 'overview.html';
+            } catch (error) {
+                alert(`Lỗi lưu dự án: ${error.message}`);
+                loadingOverlay.style.display = 'none';
+            }
+        });
+
+        discardBtn.addEventListener('click', () => {
+            if (confirm("Bạn có chắc muốn hủy bỏ và quay lại từ đầu?")) {
+                window.location.reload();
+            }
+        });
+
+        // --- Helper Functions ---
+        function unicodeToBase64(str) {
+            return btoa(unescape(encodeURIComponent(str)));
+        }
+
+        function updateDemo(htmlCode) {
+            gameDemo.srcdoc = htmlCode;
+        }
+
+        function addChatMessage(sender, message) {
+            const messageElement = document.createElement('p');
+            messageElement.innerHTML = `<strong>${sender}:</strong> ${message}`;
+            chatMessages.appendChild(messageElement);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function parseFullHtml(htmlString) {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(htmlString, 'text/html');
+            const scriptTag = doc.querySelector('script[type="module"]') || doc.querySelector('script');
+            let jsContent = '';
+            if (scriptTag) {
+                jsContent = scriptTag.innerHTML;
+                scriptTag.remove(); // Remove script from the document to avoid duplication
+            }
+            return {
+                htmlCode: doc.body.innerHTML || '',
+                cssCode: doc.querySelector('style')?.innerHTML || '',
+                jsCode: jsContent
+            };
+        }
+
+        async function callGeminiApi(apiKey, prompt, timeout = 300000) {
+            const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), timeout);
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] }),
+                    signal: controller.signal
+                });
+                clearTimeout(timeoutId);
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(`Lỗi API: ${errorData.error.message}`);
+                }
+                const data = await response.json();
+                if (!data.candidates?.[0]?.content?.parts?.[0]?.text) {
+                    throw new Error("Phản hồi từ AI không hợp lệ.");
+                }
+                
+                let text = data.candidates[0].content.parts[0].text;
+                
+                const htmlStartIndex = text.indexOf('<!DOCTYPE html>');
+                if (htmlStartIndex !== -1) {
+                    text = text.substring(htmlStartIndex);
+                }
+                
+                return text.replace(/^```html\s*|```\s*$/g, '');
+
+            } catch (error) {
+                clearTimeout(timeoutId);
+                if (error.name === 'AbortError') {
+                    throw new Error("Yêu cầu đã hết hạn. Vui lòng thử lại.");
+                }
+                throw error;
+            }
+        }
+
+        // --- Logout ---
+        logoutBtn.addEventListener('click', () => {
+            signOut(auth).catch(error => console.error("Sign-out error", error));
+        });
+
+    </script>
+</body>
+</html>
